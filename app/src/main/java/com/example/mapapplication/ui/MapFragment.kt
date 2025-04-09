@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
@@ -97,9 +99,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.btnMyLocation.setOnClickListener {
             setUpCurrentLocation()
         }
-        binding.btnRoute.setOnClickListener {
-
-        }
         observeLoading()
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.isLogout.collectLatest {
@@ -114,8 +113,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewLifecycleOwner.lifecycleScope.launch {
             currentLocationViewModel.currentLocation.collect { location ->
                 if (location != null) {
-                    addMarkerToMap(location)
+                    if (currentLocationMarker == null) addMarkerToMap(location)
                     moveCameraToLocation(map4D, location.latitude, location.longitude)
+                    animateMarkerToPosition(currentLocationMarker!!, location)
                 } else {
                     // move to Hanoi
                     moveCameraToLocation(map4D, 21.0285, 105.8544)
@@ -125,13 +125,38 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun addMarkerToMap(location: Location) {
-        currentLocationMarker?.remove()
-
         currentLocationMarker = map4D.addMarker(
             MFMarkerOptions()
                 .position(MFLocationCoordinate(location.latitude, location.longitude))
+                .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location))
         )
     }
+
+    private fun animateMarkerToPosition(marker: MFMarker, newLocation: Location) {
+        val start = marker.position
+        val end = MFLocationCoordinate(newLocation.latitude, newLocation.longitude)
+
+        val handler = android.os.Handler(Looper.getMainLooper())
+        val startTime = System.currentTimeMillis()
+        val duration = 1000L // Thời gian mượt: 1 giây
+
+        handler.post(object : Runnable {
+            override fun run() {
+                val elapsed = System.currentTimeMillis() - startTime
+                val t = (elapsed / duration.toFloat()).coerceIn(0f, 1f)
+
+                val lat = start.latitude + (end.latitude - start.latitude) * t
+                val lng = start.longitude + (end.longitude - start.longitude) * t
+
+                marker.position = MFLocationCoordinate(lat, lng)
+
+                if (t < 1f) {
+                    handler.postDelayed(this, 16) // ~60fps
+                }
+            }
+        })
+    }
+
 
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {

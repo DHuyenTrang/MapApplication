@@ -33,13 +33,13 @@
             android:contentDescription="Icon" />
 
         <TextView
-            android:id="@+id/instruction_text"
+            android:id="@+id/tv_instruction"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Go straight for 100m"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp" />
     </LinearLayout>
