@@ -1,7 +1,6 @@
 package com.example.mapapplication.ui
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import com.example.mapapplication.R
 import com.example.mapapplication.Utils.moveCameraToLocation
 import com.example.mapapplication.databinding.FragmentNavigationBinding
@@ -28,7 +26,6 @@ import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
-import vn.map4d.map.annotations.MFPolylineOptions
 import vn.map4d.map.camera.MFCameraUpdateFactory
 import vn.map4d.map.core.MFCoordinateBounds
 import vn.map4d.map.core.MFMapType
@@ -54,6 +51,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         priority = LocationRequest.PRIORITY_HIGH_ACCURACY
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,38 +69,20 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        observeSteps()
-        observeDistanceRemaining()
-        observeCurrentLocation()
+
     }
 
-    private fun observeSteps() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.steps.collect { steps ->
-                if (steps != null) {
-                    binding.tvInstruction.text =
-                        steps[routeViewModel.navigationStepIndex.value].maneuver.instruction
-                }
-            }
-        }
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
-    private fun observeDistanceRemaining() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.distanceRemaining.collect { distance ->
-                Log.d("Route", "Distance remaining: $distance")
-                if (distance == 0.0) routeViewModel.updateNavigationStepIndex()
-            }
-        }
-    }
-
-    private fun observeCurrentLocation() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            currentLocationViewModel.currentLocation.collect { location ->
-                if (location != null) {
-                    updateCurrentLocationOnMap(location)
-                }
-            }
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            val location = result.lastLocation ?: return
+            Log.d("NavigationFragment", "Location updated: ${location.latitude}, ${location.longitude}")
+            updateCurrentLocationOnMap(location)
         }
     }
 
@@ -110,13 +90,12 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         val latLng = MFLocationCoordinate(location.latitude, location.longitude)
         if (currentLocationMarker == null) {
             addMarkerToMap(location)
-
         } else {
             currentLocationMarker?.position = latLng
         }
 
         moveCameraToLocation(map4D, location.latitude, location.longitude)
-        routeViewModel.calculateDistanceRemaining(latLng)
+
         // Nếu bạn muốn vẽ đường đã đi (polyline), thêm vào list và vẽ lại
 //        pathPoints.add(latLng)
 //        drawPathOnMap()
@@ -132,23 +111,6 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-    private fun drawRoute() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.coordinates.collect { coordinates ->
-                if (coordinates.isNotEmpty()) {
-                    currentPolyline?.remove()
-                    currentPolyline = map4D.addPolyline(
-                        MFPolylineOptions().add(*coordinates.toTypedArray())
-                            .color(Color.BLUE)
-                            .width(6.0f)
-                            .zIndex(10f)
-                    )
-                }
-            }
-        }
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
@@ -158,7 +120,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            drawRoute()
+            startLocationUpdates()
         }
     }
 }
