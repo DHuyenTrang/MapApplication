@@ -43,14 +43,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
     private val routeViewModel: RouteViewModel by activityViewModel()
 
     private var currentPolyline: MFPolyline? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocationMarker: MFMarker? = null
-    private val locationRequest = LocationRequest.create().apply {
-        interval = 3000 // 3 giây
-        fastestInterval = 1000
-        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,37 +61,6 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-    }
-
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult) {
-            super.onLocationResult(result)
-            val location = result.lastLocation ?: return
-            Log.d("NavigationFragment", "Location updated: ${location.latitude}, ${location.longitude}")
-            updateCurrentLocationOnMap(location)
-        }
-    }
-
-    private fun updateCurrentLocationOnMap(location: Location) {
-        val latLng = MFLocationCoordinate(location.latitude, location.longitude)
-        if (currentLocationMarker == null) {
-            addMarkerToMap(location)
-        } else {
-            currentLocationMarker?.position = latLng
-        }
-
-        moveCameraToLocation(map4D, location.latitude, location.longitude)
-
-        // Nếu bạn muốn vẽ đường đã đi (polyline), thêm vào list và vẽ lại
-//        pathPoints.add(latLng)
-//        drawPathOnMap()
     }
 
     private fun addMarkerToMap(location: Location) {
@@ -120,7 +82,6 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            startLocationUpdates()
         }
     }
 }

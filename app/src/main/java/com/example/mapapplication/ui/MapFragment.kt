@@ -161,7 +161,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.ROADMAP
+            map4D.mapType = MFMapType.MAP3D
             setUpCurrentLocation()
             map4D.setOnMapClickListener {
                 Log.d("MapFragment", "Map clicked at: ${it.latitude}, ${it.longitude}")

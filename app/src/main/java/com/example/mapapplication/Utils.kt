@@ -13,7 +13,6 @@ object Utils {
         val cameraPosition = MFCameraPosition.Builder()
             .target(MFLocationCoordinate(lat, lon))
             .tilt(45.0)
-            .bearing(0.0)
             .build()
 
         map4d.animateCamera(
