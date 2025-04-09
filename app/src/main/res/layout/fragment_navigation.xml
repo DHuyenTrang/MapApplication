@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Map4D Map View -->
+    <vn.map4d.map.core.MFMapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Turn-by-turn instruction box -->
+    <LinearLayout
+        android:id="@+id/navigation_instruction_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:layout_anchorGravity="top"
+        android:layout_margin="12dp"
+        android:layout_gravity="top">
+
+        <ImageView
+            android:id="@+id/instruction_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_navigation"
+            android:contentDescription="Icon" />
+
+        <TextView
+            android:id="@+id/instruction_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Go straight for 100m"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+    </LinearLayout>
+
+<!--    &lt;!&ndash; Next Step Button &ndash;&gt;-->
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/btn_next_step"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="bottom|end"-->
+<!--        android:layout_margin="24dp"-->
+<!--        android:visibility="visible"-->
+<!--        android:src="@drawable/ic_next"-->
+<!--        app:backgroundTint="@color/primary"-->
+<!--        app:tint="@android:color/white" />-->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
