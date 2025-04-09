@@ -2,7 +2,9 @@ package com.example.mapapplication.ui
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mapapplication.databinding.ActivityMainBinding
@@ -11,12 +13,17 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.example.mapapplication.R
 import com.example.mapapplication.TokenManager
+import com.example.mapapplication.Utils.moveCameraToLocation
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import vn.map4d.types.MFLocationCoordinate
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,6 +32,11 @@ class MainActivity : AppCompatActivity() {
     private val currentLocationViewModel: CurrentLocationViewModel by viewModel()
     private val routeViewModel: RouteViewModel by viewModel()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient // API Google Play Services giup dinh vi
+    private val locationRequest = LocationRequest.create().apply {
+        interval = 3000 // 3 giây
+        fastestInterval = 1000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +57,19 @@ class MainActivity : AppCompatActivity() {
         requestLocationPermission()
     }
 
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            val location = result.lastLocation ?: return
+
+            updateCurrentLocationOnMap(location)
+        }
+    }
+
+    private fun updateCurrentLocationOnMap(location: Location) {
+        currentLocationViewModel.setCurrentLocation(location)
+    }
+
     private fun requestLocationPermission() {
         val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 isGranted ->
@@ -56,23 +81,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation()
+            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         }
         else{
             requestPermission.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
-        fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { location ->
-            currentLocationViewModel.setCurrentLocation(location)
-        }
-            .addOnFailureListener {
-                currentLocationViewModel.setCurrentLocation(null)
-            }
-    }
     private fun checkCurrentUser(): Boolean {
         return tokenManager.getUserId() != null
     }

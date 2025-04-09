@@ -28,6 +28,28 @@ class RouteViewModel(
     private var _isLogout = MutableStateFlow<Boolean?>(null)
     val isLogout: StateFlow<Boolean?> = _isLogout.asStateFlow()
 
+    private var _navigationStepIndex = MutableStateFlow<Int>(0)
+    val navigationStepIndex: StateFlow<Int> = _navigationStepIndex.asStateFlow()
+
+    private var _distanceRemaining = MutableStateFlow<Double?>(null)
+    val distanceRemaining: StateFlow<Double?> = _distanceRemaining.asStateFlow()
+
+    fun calculateDistanceRemaining(currentLocation: MFLocationCoordinate) {
+        val currentStep = _steps.value?.get(_navigationStepIndex.value)
+        val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
+        Log.d("RouteViewModel", "Navigation step index: ${_navigationStepIndex.value}")
+        Log.d("RouteViewModel", "Next point: ${nextPoint?.latitude} ${nextPoint?.longitude}")
+        val distance = currentLocation.distance(nextPoint!!)
+        Log.d("RouteViewModel", "Distance: $distance")
+        _distanceRemaining.value = distance
+    }
+
+    fun updateNavigationStepIndex() {
+            if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
+                _navigationStepIndex.value++
+            }
+    }
+
     fun searchRoute(bearings: Int, dstLat: Double, dstLng: Double, srcLat: Double, srcLng: Double) {
         Log.d("RouteViewModel", "in searchRoute")
         _isLoading.value = true

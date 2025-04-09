@@ -10,12 +10,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignInViewModel(
+class AuthViewModel(
     private val authRepository: AuthRepository,
     private val tokenManager: TokenManager
 ): ViewModel() {
     private val _isLoginSuccessful = MutableStateFlow<Boolean?>(null)
     val isLoginSuccessful: StateFlow<Boolean?> = _isLoginSuccessful.asStateFlow()
+
+    private var _isLogout = MutableStateFlow<Boolean?>(null)
+    val isLogout: StateFlow<Boolean?> = _isLogout.asStateFlow()
 
     fun fetchUser(phoneNumber: String, password: String) {
         viewModelScope.launch {
@@ -33,5 +36,10 @@ class SignInViewModel(
                 _isLoginSuccessful.value = false
             }
         }
+    }
+
+    fun logout(){
+        tokenManager.clearToken()
+        _isLogout.value = true
     }
 }
