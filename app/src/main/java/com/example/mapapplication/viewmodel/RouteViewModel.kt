@@ -1,5 +1,6 @@
 package com.example.mapapplication.viewmodel
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,17 +35,26 @@ class RouteViewModel(
     private var _distanceRemaining = MutableStateFlow<Double?>(null)
     val distanceRemaining: StateFlow<Double?> = _distanceRemaining.asStateFlow()
 
-    fun calculateDistanceRemaining(currentLocation: MFLocationCoordinate) {
+    fun setNavigationStepIndex(index: Int) {
+        _navigationStepIndex.value = index
+    }
+    fun calculateDistanceRemaining(location: Location) {
+        val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)
         val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
+
         Log.d("RouteViewModel", "Navigation step index: ${_navigationStepIndex.value}")
         Log.d("RouteViewModel", "Next point: ${nextPoint?.latitude} ${nextPoint?.longitude}")
         val distance = currentLocation.distance(nextPoint!!)
         Log.d("RouteViewModel", "Distance: $distance")
+
         _distanceRemaining.value = distance
+        if (distance <= 10) {
+            updateNavigationStepIndex()
+        }
     }
 
-    fun updateNavigationStepIndex() {
+    private fun updateNavigationStepIndex() {
             if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
                 _navigationStepIndex.value++
             }
@@ -69,7 +79,7 @@ class RouteViewModel(
                     // emit steps to route turn by turn
                     _steps.value = steps
                     for (step in steps ?: emptyList()) {
-                        Log.d("RouteViewModel", "Step: ${step.maneuver.instruction}")
+                        Log.d("RouteViewModel", "Step: ${step.maneuver.location}")
                     }
                     Log.d("RouteViewModel", "1stCoordinates: ${response.body()}")
                 }

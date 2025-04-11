@@ -43,17 +43,15 @@
             android:paddingStart="12dp"
             android:paddingEnd="12dp" />
     </LinearLayout>
-
-<!--    &lt;!&ndash; Next Step Button &ndash;&gt;-->
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/btn_next_step"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom|end"-->
-<!--        android:layout_margin="24dp"-->
-<!--        android:visibility="visible"-->
-<!--        android:src="@drawable/ic_next"-->
-<!--        app:backgroundTint="@color/primary"-->
-<!--        app:tint="@android:color/white" />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_close"
+        android:layout_margin="30dp"
+        app:backgroundTint="@color/white"
+        app:tint="@color/black"
+        app:layout_anchorGravity="bottom|end"
+        app:layout_anchor="@id/mapView" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

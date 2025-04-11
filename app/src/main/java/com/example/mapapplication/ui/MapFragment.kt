@@ -111,15 +111,17 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setUpCurrentLocation() {
         viewLifecycleOwner.lifecycleScope.launch {
-            currentLocationViewModel.currentLocation.collect { location ->
-                if (location != null) {
-                    if (currentLocationMarker == null) addMarkerToMap(location)
-                    moveCameraToLocation(map4D, location.latitude, location.longitude)
-                    animateMarkerToPosition(currentLocationMarker!!, location)
-                } else {
-                    // move to Hanoi
-                    moveCameraToLocation(map4D, 21.0285, 105.8544)
+            val location = currentLocationViewModel.currentLocation.value
+            if (location != null) {
+                Log.d("Location", "current location: ${location.latitude} ${location.longitude}")
+                if (currentLocationMarker == null) addMarkerToMap(location)
+                else{
+                    currentLocationMarker!!.remove()
+                    addMarkerToMap(location)
                 }
+                moveCameraToLocation(map4D, location.latitude, location.longitude, 0.0)
+            } else {
+
             }
         }
     }
@@ -132,32 +134,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-    private fun animateMarkerToPosition(marker: MFMarker, newLocation: Location) {
-        val start = marker.position
-        val end = MFLocationCoordinate(newLocation.latitude, newLocation.longitude)
-
-        val handler = android.os.Handler(Looper.getMainLooper())
-        val startTime = System.currentTimeMillis()
-        val duration = 1000L // Thời gian mượt: 1 giây
-
-        handler.post(object : Runnable {
-            override fun run() {
-                val elapsed = System.currentTimeMillis() - startTime
-                val t = (elapsed / duration.toFloat()).coerceIn(0f, 1f)
-
-                val lat = start.latitude + (end.latitude - start.latitude) * t
-                val lng = start.longitude + (end.longitude - start.longitude) * t
-
-                marker.position = MFLocationCoordinate(lat, lng)
-
-                if (t < 1f) {
-                    handler.postDelayed(this, 16) // ~60fps
-                }
-            }
-        })
-    }
-
-
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
@@ -165,7 +141,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             setUpCurrentLocation()
             map4D.setOnMapClickListener {
                 Log.d("MapFragment", "Map clicked at: ${it.latitude}, ${it.longitude}")
-                createDialog(it)
+                createDialog(MFLocationCoordinate(20.98085354867591, 105.78798040202281))
             }
         }
 
@@ -210,3 +186,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 }
+/*
+Map clicked at: 20.98085354867591, 105.78798040202281
+Step: [105.789153, 20.976631]
+Step: [105.786798, 20.979057]
+Step: [105.79009, 20.981821]
+Step: [105.788306, 20.980714]
+Step: [105.78812, 20.98095]
+ */

@@ -21,6 +21,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.map4d.types.MFLocationCoordinate
@@ -32,11 +33,12 @@ class MainActivity : AppCompatActivity() {
     private val currentLocationViewModel: CurrentLocationViewModel by viewModel()
     private val routeViewModel: RouteViewModel by viewModel()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient // API Google Play Services giup dinh vi
-    private val locationRequest = LocationRequest.create().apply {
-        interval = 3000 // 3 giây
-        fastestInterval = 1000
-        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-    }
+    private val locationRequest = LocationRequest.Builder(
+        Priority.PRIORITY_HIGH_ACCURACY, // priority
+        3000L // interval in milliseconds
+    ).apply {
+        setMinUpdateIntervalMillis(1000L) // fastest interval
+    }.build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             val location = result.lastLocation ?: return
-
+            Log.d("LOCATION", "Location: ${location.latitude}, ${location.longitude}")
             updateCurrentLocationOnMap(location)
         }
     }
