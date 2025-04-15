@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkCurrentUser(): Boolean {
+        Log.d("AUTH", "checkCurrentUser: ${tokenManager.getAccessToken()}")
         return tokenManager.getUserId() != null
     }
 }

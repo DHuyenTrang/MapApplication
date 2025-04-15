@@ -4,6 +4,7 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapapplication.R
 import com.example.mapapplication.TokenManager
 import com.example.mapapplication.data.response.Step
 import com.example.mapapplication.repository.RouteRepository
@@ -38,6 +39,16 @@ class RouteViewModel(
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
+
+//    fun getIconForManeuver(maneuverType: String): Int {
+//        return when (maneuverType) {
+//            "turn-left" -> R.drawable.ic_turn_left
+//            "right" -> R.drawable.ic_turn_right_
+//            "straight" -> R.drawable.ic_straight
+//            "uturn" ->
+//            else -> R.drawable.ic_navigation
+//        }
+//    }
     fun calculateDistanceRemaining(location: Location) {
         val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)

@@ -1,4 +1,4 @@
-package com.example.mapapplication.ui
+package com.example.mapapplication.ui.auth
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentSignInBinding
-import com.example.mapapplication.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -33,7 +32,7 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnSignin.setOnClickListener {
-            val phoneNumber = binding.edtPhoneNumber.text.toString()
+            val phoneNumber = binding.edtEmail.text.toString()
             val password = binding.edtPassword.text.toString()
 
             if (phoneNumber.isEmpty() || password.isEmpty()) {

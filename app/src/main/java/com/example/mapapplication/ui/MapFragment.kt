@@ -1,10 +1,7 @@
 package com.example.mapapplication.ui
 
-import android.app.AlertDialog
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,18 +14,14 @@ import com.example.mapapplication.Utils.moveCameraToLocation
 import com.example.mapapplication.databinding.FragmentMapBinding
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
 import vn.map4d.map.annotations.MFPolylineOptions
-import vn.map4d.map.camera.MFCameraUpdateFactory
-import vn.map4d.map.core.MFCoordinateBounds
 import vn.map4d.map.core.MFMapType
 import vn.map4d.map.core.Map4D
 import vn.map4d.map.core.OnMapReadyCallback
@@ -37,7 +30,6 @@ import vn.map4d.types.MFLocationCoordinate
 class MapFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     private val currentLocationViewModel: CurrentLocationViewModel by activityViewModel()
     private val routeViewModel: RouteViewModel by activityViewModel()
@@ -63,49 +55,52 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         listenEvent()
-        setUpBottomSheet()
+//        setUpBottomSheet()
     }
 
-    private fun setUpBottomSheet() {
-        val bottomSheet = binding.bottomSheet.bottomSheet
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        binding.bottomSheet.btnStartNavigation.setOnClickListener {
-            findNavController().navigate(R.id.action_mapFragment_to_navigationFragment)
-        }
-    }
+//    private fun setUpBottomSheet() {
+//        val bottomSheet = binding.bottomSheet.bottomSheet
+//        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        binding.bottomSheet.btnStartNavigation.setOnClickListener {
+//            findNavController().navigate(R.id.action_mapFragment_to_navigationFragment)
+//        }
+//    }
 
-    private fun drawRoute() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.coordinates.collect { coordinates ->
-                getRouteToDraw(coordinates, Color.BLUE)
-            }
-        }
-    }
+//    private fun drawRoute() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            routeViewModel.coordinates.collect { coordinates ->
+//                getRouteToDraw(coordinates, Color.BLUE)
+//            }
+//        }
+//    }
 
-    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>, color: Int) {
-        if (coordinates.isNotEmpty()) {
-            currentPolyline?.remove()
-            currentPolyline = map4D.addPolyline(
-                MFPolylineOptions().add(*coordinates.toTypedArray())
-                    .color(color)
-                    .width(6.0f)
-                    .zIndex(10f)
-            )
-        }
-    }
+//    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>, color: Int) {
+//        if (coordinates.isNotEmpty()) {
+//            currentPolyline?.remove()
+//            currentPolyline = map4D.addPolyline(
+//                MFPolylineOptions().add(*coordinates.toTypedArray())
+//                    .color(color)
+//                    .width(6.0f)
+//                    .zIndex(10f)
+//            )
+//        }
+//    }
 
     private fun listenEvent() {
         binding.btnMyLocation.setOnClickListener {
             setUpCurrentLocation()
         }
-        observeLoading()
+//        observeLoading()
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.isLogout.collectLatest {
                 if(it == true) {
                     findNavController().navigate(R.id.signInFragment)
                 }
             }
+        }
+        binding.edtSearch.setOnClickListener {
+            findNavController().navigate(R.id.action_mapFragment_to_searchLocationFragment)
         }
     }
 
@@ -121,7 +116,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
                 moveCameraToLocation(map4D, location.latitude, location.longitude, 0.0)
             } else {
-
+                moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 0.0)
             }
         }
     }
@@ -137,54 +132,54 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.MAP3D
+            map4D.mapType = MFMapType.ROADMAP
             setUpCurrentLocation()
-            map4D.setOnMapClickListener {
-                Log.d("MapFragment", "Map clicked at: ${it.latitude}, ${it.longitude}")
-                createDialog(MFLocationCoordinate(20.98085354867591, 105.78798040202281))
-            }
+//            map4D.setOnMapClickListener {
+//                Log.d("MapFragment", "Map clicked at: ${it.latitude}, ${it.longitude}")
+//                createDialog(MFLocationCoordinate(20.98085354867591, 105.78798040202281))
+//            }
         }
 
     }
-    private fun createDialog(coordinate: MFLocationCoordinate) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder
-            .setTitle("Thông báo")
-            .setMessage("Chỉ đường đến vị trí: ${coordinate.latitude} ${coordinate.longitude}")
-            .setPositiveButton("OK") { dialog, which ->
+//    private fun createDialog(coordinate: MFLocationCoordinate) {
+//        val builder = AlertDialog.Builder(requireContext())
+//        builder
+//            .setTitle("Thông báo")
+//            .setMessage("Chỉ đường đến vị trí: ${coordinate.latitude} ${coordinate.longitude}")
+//            .setPositiveButton("OK") { dialog, which ->
+//
+//                routeViewModel.searchRoute(
+//                    180,
+//                    coordinate.latitude,
+//                    coordinate.longitude,
+//                    currentLocationViewModel.currentLocation.value!!.latitude,
+//                    currentLocationViewModel.currentLocation.value!!.longitude
+//                )
+//                drawRoute()
+//            }
+//            .setNegativeButton("Cancel") { dialog, which ->
+//                dialog.dismiss()
+//            }
+//        builder.create().show()
+//    }
 
-                routeViewModel.searchRoute(
-                    180,
-                    coordinate.latitude,
-                    coordinate.longitude,
-                    currentLocationViewModel.currentLocation.value!!.latitude,
-                    currentLocationViewModel.currentLocation.value!!.longitude
-                )
-                drawRoute()
-            }
-            .setNegativeButton("Cancel") { dialog, which ->
-                dialog.dismiss()
-            }
-        builder.create().show()
-    }
-
-    private fun observeLoading() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.isLoading.collect { isLoading ->
-                if (isLoading != null) {
-                    if(isLoading) {
-                        Log.d("Route", "ProgressBar is visible")
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    else{
-                        binding.progressBar.visibility = View.GONE
-                        binding.btnRoute.visibility = View.VISIBLE
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                }
-            }
-        }
-    }
+//    private fun observeLoading() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            routeViewModel.isLoading.collect { isLoading ->
+//                if (isLoading != null) {
+//                    if(isLoading) {
+//                        Log.d("Route", "ProgressBar is visible")
+//                        binding.progressBar.visibility = View.VISIBLE
+//                    }
+//                    else{
+//                        binding.progressBar.visibility = View.GONE
+//                        binding.btnRoute.visibility = View.VISIBLE
+//                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 /*
 Map clicked at: 20.98085354867591, 105.78798040202281

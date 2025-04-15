@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
-import com.example.mapapplication.Utils.moveCameraToLocation
 import com.example.mapapplication.databinding.FragmentNavigationBinding
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
@@ -74,7 +73,9 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.navigationStepIndex.collectLatest {
                 val step = routeViewModel.steps.value?.get(it)
-                binding.tvInstruction.text = step?.maneuver?.instruction
+                val instruction = step?.maneuver?.instruction
+                binding.tvInstruction.text = instruction
+
             }
         }
     }
@@ -103,7 +104,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         newBearing: Double) {
         val handler = android.os.Handler(Looper.getMainLooper())
         val startTime = System.currentTimeMillis()
-        val duration = 1000L // 1 giây mượt
+        val duration = 1000L
 
         handler.post(object : Runnable {
             override fun run() {
@@ -145,7 +146,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
 
         val handler = android.os.Handler(Looper.getMainLooper())
         val startTime = System.currentTimeMillis()
-        val duration = 1000L // Thời gian mượt: 1 giây
+        val duration = 1000L
 
         handler.post(object : Runnable {
             override fun run() {
@@ -170,7 +171,8 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         currentLocationMarker = map4D.addMarker(
             MFMarkerOptions()
                 .position(MFLocationCoordinate(location.latitude, location.longitude))
-                .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location))
+                .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location_here))
+                .zIndex(15f)
         )
     }
 
@@ -188,7 +190,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             currentPolyline = map4D.addPolyline(
                 MFPolylineOptions().add(*coordinates.toTypedArray())
                     .color(color)
-                    .width(6.0f)
+                    .width(20.0f)
                     .zIndex(10f)
             )
         }

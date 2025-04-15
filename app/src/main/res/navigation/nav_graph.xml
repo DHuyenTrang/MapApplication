@@ -13,10 +13,13 @@
         <action
             android:id="@+id/action_mapFragment_to_navigationFragment"
             app:destination="@id/navigationFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_searchLocationFragment"
+            app:destination="@id/searchLocationFragment" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.example.mapapplication.ui.SignInFragment"
+        android:name="com.example.mapapplication.ui.auth.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
@@ -28,4 +31,18 @@
         android:name="com.example.mapapplication.ui.NavigationFragment"
         android:label="fragment_navigation"
         tools:layout="@layout/fragment_navigation" />
+    <fragment
+        android:id="@+id/searchLocationFragment"
+        android:name="com.example.mapapplication.ui.search.SearchLocationFragment"
+        android:label="fragment_search_location"
+        tools:layout="@layout/fragment_search_location" >
+        <action
+            android:id="@+id/action_searchLocationFragment_to_locationInforFragment"
+            app:destination="@id/locationInforFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationInforFragment"
+        android:name="com.example.mapapplication.ui.detail.LocationInforFragment"
+        android:label="fragment_location_infor"
+        tools:layout="@layout/fragment_location_infor" />
 </navigation>

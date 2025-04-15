@@ -1,6 +1,8 @@
 package com.example.mapapplication.network
 
 import com.example.mapapplication.data.request.UserRequest
+import com.example.mapapplication.data.response.LocationDetailResponse
+import com.example.mapapplication.data.response.LocationSearchResponse
 import com.example.mapapplication.data.response.RouteResponse
 import com.example.mapapplication.data.response.UserResponse
 import retrofit2.Response
@@ -25,4 +27,13 @@ interface APIService {
         @Query("srcLon") srcLng: Double,
     ) : Response<RouteResponse>
 
+    @GET("/v5/Place/AutoComplete")
+    suspend fun searchLocation(
+        @Query("input") input: String,
+    ): Response<LocationSearchResponse>
+
+    @GET("/v5/Place/Detail")
+    suspend fun detailLocation(
+        @Query("place_id") placeId: String,
+    ): Response<LocationDetailResponse>
 }

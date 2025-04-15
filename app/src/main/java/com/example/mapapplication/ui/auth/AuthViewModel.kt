@@ -1,4 +1,4 @@
-package com.example.mapapplication.viewmodel
+package com.example.mapapplication.ui.auth
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

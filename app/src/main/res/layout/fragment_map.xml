@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MapFragment">
@@ -12,40 +11,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <EditText
+        android:id="@+id/edt_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_edt"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:drawableStart="@drawable/ic_search_24"
+        android:drawablePadding="10dp"
+        android:focusable="false"
+        android:hint="Tìm kiếm địa điểm"
+        android:paddingVertical="15dp"
+        android:textColorHint="#66000000"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_my_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_current_location"
         android:layout_margin="30dp"
+        android:src="@drawable/ic_current_location"
         app:backgroundTint="@color/white"
-        app:tint="@color/black"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/mapView" />
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
         app:layout_anchor="@id/mapView"
-        app:layout_anchorGravity="center" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/black" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_route"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="100dp"
-        android:src="@drawable/ic_route"
-        android:visibility="gone"
-        app:backgroundTint="@color/white"
-        app:tint="@color/black"
-        android:layout_gravity="bottom|end" />
 
-    <!-- Include Bottom Sheet -->
-    <include
-        android:id="@+id/bottom_sheet"
-        layout="@layout/bottom_sheet" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
