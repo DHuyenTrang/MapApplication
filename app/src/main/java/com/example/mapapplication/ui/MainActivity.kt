@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val tokenManager: TokenManager by inject()
     private val currentLocationViewModel: CurrentLocationViewModel by viewModel()
     private val routeViewModel: RouteViewModel by viewModel()
+
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient // API Google Play Services giup dinh vi
     private val locationRequest = LocationRequest.Builder(
         Priority.PRIORITY_HIGH_ACCURACY, // priority

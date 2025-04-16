@@ -27,9 +27,6 @@ class RouteViewModel(
     private var _steps = MutableStateFlow<List<Step>?>(null)
     val steps: StateFlow<List<Step>?> = _steps.asStateFlow()
 
-    private var _isLogout = MutableStateFlow<Boolean?>(null)
-    val isLogout: StateFlow<Boolean?> = _isLogout.asStateFlow()
-
     private var _navigationStepIndex = MutableStateFlow<Int>(0)
     val navigationStepIndex: StateFlow<Int> = _navigationStepIndex.asStateFlow()
 
@@ -72,6 +69,7 @@ class RouteViewModel(
     }
 
     fun searchRoute(bearings: Int, dstLat: Double, dstLng: Double, srcLat: Double, srcLng: Double) {
+        if (_isLoading.value == true) return
         Log.d("RouteViewModel", "in searchRoute")
         _isLoading.value = true
         Log.d("Route", "Is loading: ${_isLoading.value}")
@@ -92,15 +90,12 @@ class RouteViewModel(
                     for (step in steps ?: emptyList()) {
                         Log.d("RouteViewModel", "Step: ${step.maneuver.location}")
                     }
-                    Log.d("RouteViewModel", "1stCoordinates: ${response.body()}")
                 }
                 _isLoading.value = false
                 Log.d("Route", "Is loading: ${_isLoading.value}")
             } else {
                 Log.e("RouteViewModel", "searchRoute failed: ${response.errorBody()?.string()}")
-                if (response.code() == 644) {
-                    logout()
-                }
+
             }
         }
     }
@@ -150,9 +145,5 @@ class RouteViewModel(
         }
 
         return polyline
-    }
-    private fun logout(){
-        tokenManager.clearToken()
-        _isLogout.value = true
     }
 }

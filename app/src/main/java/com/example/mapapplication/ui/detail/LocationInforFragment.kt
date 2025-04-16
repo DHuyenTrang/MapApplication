@@ -1,6 +1,6 @@
 package com.example.mapapplication.ui.detail
 
-import android.location.Location
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,9 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import com.example.mapapplication.R
 import com.example.mapapplication.Utils
 import com.example.mapapplication.databinding.FragmentLocationInforBinding
-import com.example.mapapplication.model.LocationDetail
+import com.example.mapapplication.viewmodel.CurrentLocationViewModel
+import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.core.MFMapType
 import vn.map4d.map.core.Map4D
 import vn.map4d.map.core.OnMapReadyCallback
@@ -21,16 +23,28 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
+import vn.map4d.map.annotations.MFPolyline
+import vn.map4d.map.annotations.MFPolylineOptions
 import vn.map4d.types.MFLocationCoordinate
 
 class LocationInforFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentLocationInforBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: LocationDetailViewModel by viewModel()
+
+    private val locationDetailViewModel: LocationDetailViewModel by viewModel()
+    private val currentLocationViewModel: CurrentLocationViewModel by activityViewModel()
+    private val routeViewModel: RouteViewModel by activityViewModel()
+
+    private var placeId: String = ""
+    private var currentLat: Double? = null
+    private var currentLng: Double? = null
+    private var destinationLat: Double? = null
+    private var destinationLng: Double? = null
 
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
     private var destinationMarker: MFMarker? = null
+    private var currentPolyline: MFPolyline? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,53 +62,79 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
-        val placeId = arguments?.getString("place_id") ?: ""
+        placeId = arguments?.getString("place_id") ?: ""
         Log.d("SearchLocation", "placeId: $placeId")
 
-        viewModel.fetchLocationDetail(placeId)
-
+        locationDetailViewModel.fetchLocationDetail(placeId)
     }
 
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.locationDetail.collectLatest {
+            locationDetailViewModel.locationDetail.collectLatest {
                 if (it != null) {
-                    setDestinationLocation(it)
+                    destinationLat = it.lat
+                    destinationLng = it.lng
+                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 0.0)
+                    drawMarker(destinationMarker, it.lat, it.lng, R.drawable.ic_marker_destination)
                     binding.tvNameLocation.text = it.name
                     binding.tvAddressLocation.text = it.address
+
+                    trySearchRoute()
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            currentLocationViewModel.currentLocation.collectLatest {
+                if (it != null) {
+                    currentLat = it.latitude
+                    currentLng = it.longitude
+                    drawMarker(currentLocationMarker, it.latitude, it.longitude, R.drawable.ic_location)
+
+                    trySearchRoute()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.coordinates.collect { coordinates ->
+                getRouteToDraw(coordinates)
             }
         }
     }
 
-    private fun setDestinationLocation(locationDetail: LocationDetail) {
-        val lat = locationDetail.lat
-        val lng = locationDetail.lng
-        Log.d("LocationDetail", "lat: $lat, lng: $lng")
-        Utils.moveCameraToLocation(map4D, lat, lng, 0.0)
-        if (destinationMarker == null) addMarkerToMap(lat, lng, R.drawable.ic_marker_destination)
-        else{
-            destinationMarker!!.remove()
-            addMarkerToMap(lat, lng, R.drawable.ic_marker_destination)
+    private fun trySearchRoute() {
+        if (currentLat != null && currentLng != null && destinationLat != null && destinationLng != null) {
+            routeViewModel.searchRoute(180,
+                destinationLat!!, destinationLng!!, currentLat!!, currentLng!!)
         }
     }
 
-    private fun setCurrentLocation(location: Location) {
-        val lat = location.latitude
-        val lon = location.longitude
-        if(currentLocationMarker == null) addMarkerToMap(lat, lon, R.drawable.ic_location)
-        else {
-            currentLocationMarker!!.remove()
-            addMarkerToMap(lat, lon, R.drawable.ic_location)
-        }
-    }
-
-    private fun addMarkerToMap(lat: Double, lng: Double, source: Int) {
-        destinationMarker = map4D.addMarker(
+    private fun drawMarker(marker: MFMarker?, lat: Double, lon: Double, source: Int) {
+        marker?.remove()
+        val newMarker = map4D.addMarker(
             MFMarkerOptions()
-                .position(MFLocationCoordinate(lat, lng))
+                .position(MFLocationCoordinate(lat, lon))
                 .icon(MFBitmapDescriptorFactory.fromResource(source))
         )
+
+        // Gán lại marker tương ứng
+        when (source) {
+            R.drawable.ic_location -> currentLocationMarker = newMarker
+            R.drawable.ic_marker_destination -> destinationMarker = newMarker
+        }
+    }
+
+    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>) {
+        if (coordinates.isNotEmpty()) {
+            currentPolyline?.remove()
+            currentPolyline = map4D.addPolyline(
+                MFPolylineOptions().add(*coordinates.toTypedArray())
+                    .color(Color.BLUE)
+                    .width(6.0f)
+                    .zIndex(10f)
+            )
+        }
     }
 
     override fun onMapReady(p0: Map4D?) {

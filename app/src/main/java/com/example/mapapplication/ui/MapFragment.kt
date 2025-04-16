@@ -32,8 +32,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
 
     private val currentLocationViewModel: CurrentLocationViewModel by activityViewModel()
-    private val routeViewModel: RouteViewModel by activityViewModel()
-    private var currentPolyline: MFPolyline? = null
 
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
@@ -90,14 +88,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private fun listenEvent() {
         binding.btnMyLocation.setOnClickListener {
             setUpCurrentLocation()
-        }
-//        observeLoading()
-        viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.isLogout.collectLatest {
-                if(it == true) {
-                    findNavController().navigate(R.id.signInFragment)
-                }
-            }
         }
         binding.edtSearch.setOnClickListener {
             findNavController().navigate(R.id.action_mapFragment_to_searchLocationFragment)
