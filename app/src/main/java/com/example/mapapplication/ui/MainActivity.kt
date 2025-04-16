@@ -50,11 +50,11 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val controller = navHostFragment.navController
 
-        if (checkCurrentUser()) {
-            controller.navigate(R.id.mapFragment)
-        } else {
-            controller.navigate(R.id.signInFragment)
-        }
+//        if (checkCurrentUser()) {
+//            controller.navigate(R.id.mapFragment)
+//        } else {
+//            controller.navigate(R.id.signInFragment)
+//        }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationPermission()

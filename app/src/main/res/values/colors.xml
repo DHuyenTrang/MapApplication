@@ -15,5 +15,6 @@
     <color name="warning">#FFAB00</color>
     <color name="icon_secondary">#A1A1A1</color>
     <color name="background2">#F5F5F5</color>
+    <color name="light_primary">#C7BDF4</color>
 
 </resources>

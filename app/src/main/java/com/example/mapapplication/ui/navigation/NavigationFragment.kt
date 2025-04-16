@@ -1,4 +1,4 @@
-package com.example.mapapplication.ui
+package com.example.mapapplication.ui.navigation
 
 import android.graphics.Color
 import android.location.Location
@@ -171,7 +171,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         currentLocationMarker = map4D.addMarker(
             MFMarkerOptions()
                 .position(MFLocationCoordinate(location.latitude, location.longitude))
-                .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location_here))
+                .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location))
                 .zIndex(15f)
         )
     }
@@ -206,7 +206,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             map4D = p0
             routing()
             drawRoute()
-            map4D.mapType = MFMapType.MAP3D
+            map4D.mapType = MFMapType.ROADMAP
         }
     }
 }

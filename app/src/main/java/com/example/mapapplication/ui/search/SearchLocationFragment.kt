@@ -42,15 +42,6 @@ class SearchLocationFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        val editText = binding.edtSearch
-
-        editText.postDelayed({
-            editText.requestFocus()
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-        }, 100)
-
         binding.edtSearch.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val input = binding.edtSearch.text.toString()

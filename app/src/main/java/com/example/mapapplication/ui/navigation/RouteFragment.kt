@@ -1,43 +1,37 @@
-package com.example.mapapplication.ui.detail
+package com.example.mapapplication.ui.navigation
 
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
-import com.example.mapapplication.Utils
-import com.example.mapapplication.databinding.FragmentLocationInforBinding
-import com.example.mapapplication.viewmodel.CurrentLocationViewModel
+import com.example.mapapplication.databinding.FragmentRouteBinding
 import com.example.mapapplication.viewmodel.RouteViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import vn.map4d.map.core.MFMapType
-import vn.map4d.map.core.Map4D
-import vn.map4d.map.core.OnMapReadyCallback
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
 import vn.map4d.map.annotations.MFPolylineOptions
+import vn.map4d.map.camera.MFCameraUpdateFactory
+import vn.map4d.map.core.MFCoordinateBounds
+import vn.map4d.map.core.MFMapType
+import vn.map4d.map.core.Map4D
+import vn.map4d.map.core.OnMapReadyCallback
 import vn.map4d.types.MFLocationCoordinate
 
-class LocationInforFragment : Fragment(), OnMapReadyCallback {
-    private var _binding: FragmentLocationInforBinding? = null
+class RouteFragment : Fragment(), OnMapReadyCallback {
+    private var _binding: FragmentRouteBinding? = null
     private val binding get() = _binding!!
 
-    private val locationDetailViewModel: LocationDetailViewModel by viewModel()
-    private val currentLocationViewModel: CurrentLocationViewModel by activityViewModel()
     private val routeViewModel: RouteViewModel by activityViewModel()
 
-    private var placeId: String = ""
     private var currentLat: Double? = null
     private var currentLng: Double? = null
     private var destinationLat: Double? = null
@@ -53,7 +47,7 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentLocationInforBinding.inflate(inflater, container, false)
+        _binding = FragmentRouteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -67,40 +61,39 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
-
-        placeId = arguments?.getString("place_id") ?: ""
-        Log.d("SearchLocation", "placeId: $placeId")
-
-        locationDetailViewModel.fetchLocationDetail(placeId)
-        currentLat = currentLocationViewModel.currentLocation.value?.latitude
-        currentLng = currentLocationViewModel.currentLocation.value?.longitude
-
-        binding.btnRoute.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_locationInforFragment_to_routeFragment,
-                args = bundleOf(
-                    "currentLat" to currentLat,
-                    "currentLng" to currentLng,
-                    "destinationLat" to destinationLat,
-                    "destinationLng" to destinationLng
-                )
-            )
+        binding.btnStartNavigation.setOnClickListener {
+            findNavController().navigate(R.id.action_routeFragment_to_navigationFragment)
         }
+
+        currentLat = arguments?.getDouble("currentLat")
+        currentLng = arguments?.getDouble("currentLng")
+        destinationLat = arguments?.getDouble("destinationLat")
+        destinationLng = arguments?.getDouble("destinationLng")
+        routeViewModel.searchRoute(180, destinationLat!!, destinationLng!!, currentLat!!, currentLng!!)
+        Log.d("RouteFragment", "currentLat: $currentLat, currentLng: $currentLng, destinationLat: $destinationLat, destinationLng: $destinationLng")
     }
 
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
-            locationDetailViewModel.locationDetail.collectLatest {
-                if (it != null) {
-                    destinationLat = it.lat
-                    destinationLng = it.lng
-                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 0.0)
-                    drawMarker(destinationMarker, it.lat, it.lng, R.drawable.ic_marker_destination)
-                    binding.tvNameLocation.text = it.name
-                    binding.tvAddressLocation.text = it.address
-
-                }
+            routeViewModel.coordinates.collect { coordinates ->
+                getRouteToDraw(coordinates)
             }
+        }
+    }
+
+    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>) {
+        if (coordinates.isNotEmpty()) {
+            currentPolyline?.remove()
+            currentPolyline = map4D.addPolyline(
+                MFPolylineOptions().add(*coordinates.toTypedArray())
+                    .color(Color.BLUE)
+                    .width(6.0f)
+                    .zIndex(10f)
+            )
+            val builder = MFCoordinateBounds.Builder()
+            coordinates.forEach { builder.include(it) }
+            val bounds = builder.build()
+            map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 100))
         }
     }
 
@@ -119,17 +112,20 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
             drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
+            drawMarker(destinationMarker, destinationLat!!, destinationLng!!,
+                R.drawable.ic_marker_destination
+            )
             observe()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

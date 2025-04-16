@@ -1,4 +1,4 @@
-package com.example.mapapplication.ui
+package com.example.mapapplication.ui.map
 
 import android.location.Location
 import android.os.Bundle
@@ -13,15 +13,11 @@ import com.example.mapapplication.R
 import com.example.mapapplication.Utils.moveCameraToLocation
 import com.example.mapapplication.databinding.FragmentMapBinding
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
-import com.example.mapapplication.viewmodel.RouteViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
-import vn.map4d.map.annotations.MFPolyline
-import vn.map4d.map.annotations.MFPolylineOptions
 import vn.map4d.map.core.MFMapType
 import vn.map4d.map.core.Map4D
 import vn.map4d.map.core.OnMapReadyCallback

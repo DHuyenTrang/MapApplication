@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.navigation.RouteFragment">
+
+    <vn.map4d.map.core.MFMapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrrow_back"
+        android:layout_margin="30dp"
+        app:backgroundTint="@color/white"
+        app:tint="@color/black"
+        android:id="@+id/btn_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@color/white">
+        <View
+            android:layout_width="40dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_drag_handle" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edt"
+            android:text="Vị trí hiện tại"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:paddingVertical="15dp"
+            android:layout_marginBottom="5dp"
+            />
+        <TextView
+            android:id="@+id/tv_destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edt"
+            android:text="Học viện công nghệ bưu chính viễn thông"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:paddingVertical="15dp"
+            android:drawablePadding="10dp"
+            app:drawableStartCompat="@drawable/ic_marker_destination"
+            android:layout_marginBottom="10dp"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/bg_drag_handle"
+            />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_layout"
+            android:padding="17dp"
+            >
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="15 phúc"
+                android:id="@+id/tv_time"
+                android:textSize="17sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="7.7 km"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/tv_distance"
+                android:textSize="17sp"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_button_primary"
+            android:layout_marginTop="10dp"
+            android:id="@+id/btn_start_navigation"
+            android:text="Bắt đầu đi"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

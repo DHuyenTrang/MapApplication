@@ -7,12 +7,9 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.mapapplication.ui.MapFragment"
+        android:name="com.example.mapapplication.ui.map.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
-        <action
-            android:id="@+id/action_mapFragment_to_navigationFragment"
-            app:destination="@id/navigationFragment" />
         <action
             android:id="@+id/action_mapFragment_to_searchLocationFragment"
             app:destination="@id/searchLocationFragment" />
@@ -28,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigationFragment"
-        android:name="com.example.mapapplication.ui.NavigationFragment"
+        android:name="com.example.mapapplication.ui.navigation.NavigationFragment"
         android:label="fragment_navigation"
         tools:layout="@layout/fragment_navigation" />
     <fragment
@@ -44,5 +41,18 @@
         android:id="@+id/locationInforFragment"
         android:name="com.example.mapapplication.ui.detail.LocationInforFragment"
         android:label="fragment_location_infor"
-        tools:layout="@layout/fragment_location_infor" />
+        tools:layout="@layout/fragment_location_infor" >
+        <action
+            android:id="@+id/action_locationInforFragment_to_routeFragment"
+            app:destination="@id/routeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/routeFragment"
+        android:name="com.example.mapapplication.ui.navigation.RouteFragment"
+        android:label="fragment_route"
+        tools:layout="@layout/fragment_route" >
+        <action
+            android:id="@+id/action_routeFragment_to_navigationFragment"
+            app:destination="@id/navigationFragment" />
+    </fragment>
 </navigation>
