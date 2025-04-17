@@ -1,108 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.auth.SignInFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_title"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:text="Sign In"
-        android:textAlignment="center"
-        android:textColor="@color/text_primary"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/edt_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/bg_edt"
-        android:drawableStart="@drawable/ic_mail"
-        android:drawablePadding="15dp"
-        android:hint="Email or phone number"
-        android:padding="20dp"
-        android:textColor="@color/text_primary"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/activity_padding_horizontal"
+            android:paddingTop="@dimen/activity_padding_horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/authen_layout_max_width">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:hint=""
-        app:hintEnabled="false"
-        app:layout_constraintTop_toBottomOf="@id/edt_email"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/text_secondary">
+            <ImageView
+                android:id="@+id/ivLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/img_logo"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edt_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_edt"
-            android:drawableStart="@drawable/ic_lock"
-            android:drawablePadding="15dp"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="20dp"
-            android:textColor="@color/text_primary" />
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/base_content_margin_title"
+                android:text="Đăng nhập"
+                android:textAppearance="@style/Gofa.Text2XL.Bold.LineHeight"
+                android:textColor="@color/onSurface"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/tvLoginDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/base_content_margin_title"
+                android:text="Trải nghiệm hành trình của bạn \ncùng GOFA"
+                android:textAppearance="@style/Gofa.TextBase.Bold.LineHeight"
+                android:textColor="@color/onSurfaceVariant"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
 
-    <Button
-        android:id="@+id/btn_signin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_button_primary"
-        android:paddingVertical="15dp"
-        android:text="Sign In"
-        android:textAllCaps="false"
-        android:textColor="@color/text_white"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/til_password" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputPhoneNumber"
+                style="@style/Gofa.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Số điện thoại"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLoginDescription">
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="Don't have acccount?"
-        android:textAllCaps="false"
-        android:textColor="@color/text_primary"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.3"
-        app:layout_constraintStart_toStartOf="parent" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeActionLabel="next"
+                    android:inputType="phone"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    android:textAppearance="@style/Gofa.TextBase"
+                    android:textColor="@color/onSurfaceVariant" />
 
-    <Button
-        android:id="@+id/btn_signup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:text=" Sign Up now"
-        android:textAllCaps="false"
-        android:textSize="17sp"
-        android:textColor="@color/warning"
-        app:layout_constraintStart_toEndOf="@id/tv"
-        app:layout_constraintTop_toTopOf="@id/tv"
-        app:layout_constraintBottom_toBottomOf="@id/tv"
-        android:textStyle="bold"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/txtError"
+                style="@style/Gofa.TextSm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_info"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/error"
+                android:gravity="center_vertical"
+                android:text="Mobile phone is invalid"
+                android:textColor="@color/error"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="@+id/inputPhoneNumber"
+                app:layout_constraintTop_toBottomOf="@+id/inputPhoneNumber"
+                tools:visibility="visible" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputCurrentPassword"
+                style="@style/Gofa.TextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:hint="Mật khẩu"
+                app:endIconMode="password_toggle"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputPhoneNumber"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCurrentPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeActionLabel="done"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:textAppearance="@style/Gofa.TextBase"
+                    android:textColor="@color/onSurfaceVariant" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/txtPasswordError"
+                style="@style/Gofa.TextSm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_info"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/error"
+                android:gravity="center_vertical"
+                android:text="Password is invalid"
+                android:textColor="@color/error"
+                android:visibility="gone"
+                app:layout_constraintLeft_toLeftOf="@+id/inputCurrentPassword"
+                app:layout_constraintTop_toBottomOf="@+id/inputCurrentPassword"
+                tools:visibility="visible" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSignIn"
+                style="@style/Gofa.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="Đăng nhập"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/inputCurrentPassword" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnForgotPassword"
+                style="@style/Gofa.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Quên mật khẩu"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -4,8 +4,7 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapapplication.R
-import com.example.mapapplication.TokenManager
+import com.example.mapapplication.manager.TokenManager
 import com.example.mapapplication.data.response.Step
 import com.example.mapapplication.repository.RouteRepository
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -10,17 +10,18 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrrow_back"
-        android:layout_margin="30dp"
-        app:backgroundTint="@color/white"
-        app:tint="@color/black"
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        style="@style/Gofa.IconButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="@dimen/activity_padding_horizontal"
+        app:icon="@drawable/ic_back"
+        app:iconTint="@color/onSurface"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,8 +41,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_edt"
             android:text="Vị trí hiện tại"
-            android:textColor="@color/text_primary"
-            android:textSize="15sp"
+            android:textAppearance="@style/Gofa.TextBase"
             android:paddingVertical="15dp"
             android:layout_marginBottom="5dp"
             />
@@ -51,8 +51,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_edt"
             android:text="Học viện công nghệ bưu chính viễn thông"
-            android:textColor="@color/text_primary"
-            android:textSize="15sp"
+            android:textAppearance="@style/Gofa.TextBase"
             android:paddingVertical="15dp"
             android:drawablePadding="10dp"
             app:drawableStartCompat="@drawable/ic_marker_destination"
@@ -76,9 +75,7 @@
                 android:layout_height="match_parent"
                 android:text="15 phúc"
                 android:id="@+id/tv_time"
-                android:textSize="17sp"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold"
+                android:textAppearance="@style/Gofa.TextXL.Bold"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -86,9 +83,7 @@
                 android:text="7.7 km"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/tv_distance"
-                android:textSize="17sp"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold"
+                android:textAppearance="@style/Gofa.TextXL.Bold"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <Button
@@ -98,8 +93,7 @@
             android:layout_marginTop="10dp"
             android:id="@+id/btn_start_navigation"
             android:text="Bắt đầu đi"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
+            textAppearance="@style/Gofa.TextXL.Bold"
             />
     </LinearLayout>
 

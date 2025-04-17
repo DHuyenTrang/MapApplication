@@ -1,4 +1,4 @@
-package com.example.mapapplication
+package com.example.mapapplication.manager
 
 import android.content.Context
 import android.content.SharedPreferences

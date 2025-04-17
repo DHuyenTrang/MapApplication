@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activity_padding_horizontal">20dp</dimen>
+    <dimen name="activity_padding_vertical">16dp</dimen>
+
+    <dimen name="authen_layout_max_width">400dp</dimen>
+
+    <dimen name="base_content_margin_title">4dp</dimen>
+    <dimen name="session_margin">24dp</dimen>
+
+    <dimen name="bottom_sheet_peek_height">76dp</dimen>
+    <dimen name="bottom_sheet_radius">10dp</dimen>
+    <dimen name="bottom_sheet_padding_vertical">12dp</dimen>
+    <dimen name="bottom_sheet_margin">90dp</dimen>
+
+    <dimen name="search_bar_height">48dp</dimen>
+    <dimen name="search_bar_radius">10dp</dimen>
+    <dimen name="search_bar_padding">12dp</dimen>
+    <dimen name="search_bar_icon_size">24dp</dimen>
+
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="card_border_radius">12dp</dimen>
+    <dimen name="card_vov_border_radius">16dp</dimen>
+    <dimen name="card_margin_session">20dp</dimen>
+    <dimen name="card_padding">12dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+
+    <dimen name="setting_session_margin">32dp</dimen>
+
+    <dimen name="text_input_border_radius">8dp</dimen>
+    <dimen name="text_input_border_radius2">0dp</dimen>
+
+    <dimen name="width_fragment_container_view_120dp">120dp</dimen>
+    <dimen name="height_fragment_container_view_160dp">160dp</dimen>
+    <dimen name="coordinator_layout">300dp</dimen>
+    <dimen name="width_fragment_container_view_360dp">360dp</dimen>
+    <dimen name="height_fragment_container_view_600dp">600dp</dimen>
+    <dimen name="margin_gofa_speed_board">36dp</dimen>
+
+    <dimen name="pv_pin_view_item_size">48dp</dimen>
+    <dimen name="pv_pin_view_item_radius">5dp</dimen>
+    <dimen name="pv_pin_view_item_spacing">5dp</dimen>
+    <dimen name="pv_pin_view_item_line_width">2dp</dimen>
+    <dimen name="pv_pin_view_cursor_width">2dp</dimen>
+
+    <dimen name="verify_otp_margin_top">36dp</dimen>
+</resources>

@@ -11,17 +11,16 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrrow_back"
-        android:layout_margin="30dp"
-        app:backgroundTint="@color/white"
-        app:tint="@color/black"
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        style="@style/Gofa.IconButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="@dimen/activity_padding_horizontal"
+        app:icon="@drawable/ic_back"
+        app:iconTint="@color/onSurface"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,9 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Banh mi hoi an"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textAppearance="@style/Gofa.TextXL.Bold"
             />
         <TextView
             android:id="@+id/tv_address_location"
@@ -52,9 +49,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Km10, Tran Phu, Ha Dong, Ha Noi"
-            android:textSize="15sp"
-            android:textColor="@color/text_secondary"
-            app:drawableStartCompat="@drawable/ic_location_here"
+            android:textAppearance="@style/Gofa.TextBase"
+            app:drawableStartCompat="@drawable/ic_place"
             android:drawablePadding="10dp"/>
         <Button
             android:layout_width="match_parent"
@@ -63,8 +59,7 @@
             android:layout_marginTop="20dp"
             android:id="@+id/btn_route"
             android:text="Xem đường đi"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
+            android:textAppearance="@style/Gofa.TextBase.Bold"
             />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

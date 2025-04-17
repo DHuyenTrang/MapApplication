@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Gofa.Text6XL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">64sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.Text6XL.Bold" parent="Gofa.Text6XL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.Text6XL.LineHeight" parent="Gofa.Text6XL">
+        <item name="android:lineHeight" tools:targetApi="p">72sp</item>
+    </style>
+    <style name="Gofa.Text6XL.Bold.LineHeight" parent="Gofa.Text6XL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">72sp</item>
+    </style>
+
+    <style name="Gofa.Text5XL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">48sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.Text5XL.Bold" parent="Gofa.Text5XL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.Text5XL.LineHeight" parent="Gofa.Text5XL">
+        <item name="android:lineHeight" tools:targetApi="p">56sp</item>
+    </style>
+    <style name="Gofa.Text5XL.Bold.LineHeight" parent="Gofa.Text5XL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">56sp</item>
+    </style>
+
+    <style name="Gofa.Text4XL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.Text4XL.Bold" parent="Gofa.Text4XL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.Text4XL.LineHeight" parent="Gofa.Text4XL">
+        <item name="android:lineHeight" tools:targetApi="p">44sp</item>
+    </style>
+    <style name="Gofa.Text4XL.Bold.LineHeight" parent="Gofa.Text4XL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">44sp</item>
+    </style>
+
+    <style name="Gofa.Text3XL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.Text3XL.Bold" parent="Gofa.Text3XL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.Text3XL.LineHeight" parent="Gofa.Text3XL">
+        <item name="android:lineHeight" tools:targetApi="p">40sp</item>
+    </style>
+    <style name="Gofa.Text3XL.Bold.LineHeight" parent="Gofa.Text3XL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">40sp</item>
+    </style>
+
+    <style name="Gofa.Text2XL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.Text2XL.Bold" parent="Gofa.Text2XL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.Text2XL.LineHeight" parent="Gofa.Text2XL">
+        <item name="android:lineHeight" tools:targetApi="p">32sp</item>
+    </style>
+    <style name="Gofa.Text2XL.Bold.LineHeight" parent="Gofa.Text2XL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">32sp</item>
+    </style>
+
+    <style name="Gofa.TextXL" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextXL.Bold" parent="Gofa.TextXL">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextXL.LineHeight" parent="Gofa.TextXL">
+        <item name="android:lineHeight" tools:targetApi="p">32sp</item>
+    </style>
+    <style name="Gofa.TextXL.Bold.LineHeight" parent="Gofa.TextXL.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">32sp</item>
+    </style>
+
+    <style name="Gofa.TextLg" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextLg.Bold" parent="Gofa.TextLg">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextLg.LineHeight" parent="Gofa.TextLg">
+        <item name="android:lineHeight" tools:targetApi="p">28sp</item>
+    </style>
+    <style name="Gofa.TextLg.Bold.LineHeight" parent="Gofa.TextLg.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">28sp</item>
+    </style>
+
+    <style name="Gofa.TextBase" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextBase.Bold" parent="Gofa.TextBase">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextBase.LineHeight" parent="Gofa.TextBase">
+        <item name="android:lineHeight" tools:targetApi="p">24sp</item>
+    </style>
+    <style name="Gofa.TextBase.Bold.LineHeight" parent="Gofa.TextBase.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">24sp</item>
+    </style>
+
+    <style name="Gofa.TextSm" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextSm.Bold" parent="Gofa.TextSm">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextSm.LineHeight" parent="Gofa.TextSm">
+        <item name="android:lineHeight" tools:targetApi="p">20sp</item>
+    </style>
+    <style name="Gofa.TextSm.Bold.LineHeight" parent="Gofa.TextSm.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">20sp</item>
+    </style>
+
+    <style name="Gofa.TextXs" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextXs.Bold" parent="Gofa.TextXs">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextXs.LineHeight" parent="Gofa.TextXs">
+        <item name="android:lineHeight" tools:targetApi="p">16sp</item>
+    </style>
+    <style name="Gofa.TextXs.Bold.LineHeight" parent="Gofa.TextXs.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">16sp</item>
+    </style>
+
+    <style name="Gofa.TextXxs" parent="Base.Theme.Gofa">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="Gofa.TextXxs.Bold" parent="Gofa.TextXxs">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Gofa.TextXxs.LineHeight" parent="Gofa.TextXxs">
+        <item name="android:lineHeight" tools:targetApi="p">12sp</item>
+    </style>
+    <style name="Gofa.TextXxs.Bold.LineHeight" parent="Gofa.TextXxs.Bold">
+        <item name="android:lineHeight" tools:targetApi="p">12sp</item>
+    </style>
+</resources>

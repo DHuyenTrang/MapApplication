@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation_container"
@@ -14,6 +14,7 @@
 
     <!-- Turn-by-turn instruction box -->
     <LinearLayout
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/navigation_instruction_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,6 +53,8 @@
         app:backgroundTint="@color/white"
         app:tint="@color/black"
         app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/mapView" />
+        app:layout_anchor="@id/mapView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,8 @@ package com.example.mapapplication.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.mapapplication.TokenManager
+import com.example.mapapplication.manager.SessionManager
+import com.example.mapapplication.manager.TokenManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -14,5 +15,5 @@ val appModule = module {
 
     single<SharedPreferences> { androidContext().getSharedPreferences("authPrefs", Context.MODE_PRIVATE) }
     single { TokenManager(androidContext()) }
-
+    single { SessionManager(get()) }
 }

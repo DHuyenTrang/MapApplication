@@ -1,6 +1,5 @@
 package com.example.mapapplication.ui
 
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -12,8 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.example.mapapplication.R
-import com.example.mapapplication.TokenManager
-import com.example.mapapplication.Utils.moveCameraToLocation
+import com.example.mapapplication.manager.TokenManager
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -24,7 +22,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import vn.map4d.types.MFLocationCoordinate
 
 class MainActivity : AppCompatActivity() {
 

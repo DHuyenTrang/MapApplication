@@ -1,7 +1,7 @@
 package com.example.mapapplication.network
 
 import android.util.Log
-import com.example.mapapplication.TokenManager
+import com.example.mapapplication.manager.TokenManager
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -15,7 +15,15 @@ class AuthInterceptor(
             .addHeader("Authorization", "Bearer $accessToken")
             .addHeader("x-id", userID)
             .build()
-        return chain.proceed(request)
+        val response = chain.proceed(request)
+
+        if (response.code == 644) { // log out
+            Log.d("AuthInterceptor", "Received 644 - logging out")
+            tokenManager.clearToken()
+        }
+
+
+        return response
     }
 
 //    private fun refreshToken(): String? {
