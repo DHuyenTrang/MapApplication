@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentRouteBinding
+import com.example.mapapplication.utils.extension.drawMarker
 import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -97,21 +98,6 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun drawMarker(marker: MFMarker?, lat: Double, lon: Double, source: Int) {
-        marker?.remove()
-        val newMarker = map4D.addMarker(
-            MFMarkerOptions()
-                .position(MFLocationCoordinate(lat, lon))
-                .icon(MFBitmapDescriptorFactory.fromResource(source))
-        )
-
-        // Gán lại marker tương ứng
-        when (source) {
-            R.drawable.ic_location -> currentLocationMarker = newMarker
-            R.drawable.ic_marker_destination -> destinationMarker = newMarker
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -121,10 +107,8 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
-            drawMarker(destinationMarker, destinationLat!!, destinationLng!!,
-                R.drawable.ic_marker_destination
-            )
+            currentLocationMarker = map4D.drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
+            destinationMarker = map4D.drawMarker(destinationMarker, destinationLat!!, destinationLng!!, R.drawable.ic_pin_marker)
             observe()
         }
     }

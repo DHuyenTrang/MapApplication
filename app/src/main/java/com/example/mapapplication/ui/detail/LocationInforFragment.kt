@@ -1,20 +1,22 @@
 package com.example.mapapplication.ui.detail
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
-import com.example.mapapplication.Utils
+import com.example.mapapplication.utils.Utils
 import com.example.mapapplication.databinding.FragmentLocationInforBinding
+import com.example.mapapplication.utils.extension.drawMarker
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -26,7 +28,6 @@ import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
-import vn.map4d.map.annotations.MFPolylineOptions
 import vn.map4d.types.MFLocationCoordinate
 
 class LocationInforFragment : Fragment(), OnMapReadyCallback {
@@ -67,6 +68,10 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        val bottomSheet = binding.bottomSheetDashboard.root
+        val bottomSheetBehavior =
+            BottomSheetBehavior.from<LinearLayout>(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         placeId = arguments?.getString("place_id") ?: ""
         Log.d("SearchLocation", "placeId: $placeId")
@@ -75,7 +80,7 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         currentLat = currentLocationViewModel.currentLocation.value?.latitude
         currentLng = currentLocationViewModel.currentLocation.value?.longitude
 
-        binding.btnRoute.setOnClickListener {
+        binding.bottomSheetDashboard.btnRoute.setOnClickListener {
             findNavController().navigate(
                 R.id.action_locationInforFragment_to_routeFragment,
                 args = bundleOf(
@@ -95,27 +100,16 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
                     destinationLat = it.lat
                     destinationLng = it.lng
                     Utils.moveCameraToLocation(map4D, it.lat, it.lng, 0.0)
-                    drawMarker(destinationMarker, it.lat, it.lng, R.drawable.ic_marker_destination)
-                    binding.tvNameLocation.text = it.name
-                    binding.tvAddressLocation.text = it.address
-
+                    destinationMarker = map4D.drawMarker(
+                        destinationMarker,
+                        it.lat,
+                        it.lng,
+                        R.drawable.ic_pin_marker
+                    )
+                    binding.bottomSheetDashboard.tvNameLocation.text = it.name
+                    binding.bottomSheetDashboard.tvAddressLocation.text = it.address
                 }
             }
-        }
-    }
-
-    private fun drawMarker(marker: MFMarker?, lat: Double, lon: Double, source: Int) {
-        marker?.remove()
-        val newMarker = map4D.addMarker(
-            MFMarkerOptions()
-                .position(MFLocationCoordinate(lat, lon))
-                .icon(MFBitmapDescriptorFactory.fromResource(source))
-        )
-
-        // Gán lại marker tương ứng
-        when (source) {
-            R.drawable.ic_location -> currentLocationMarker = newMarker
-            R.drawable.ic_marker_destination -> destinationMarker = newMarker
         }
     }
 
@@ -123,7 +117,12 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
+            currentLocationMarker = map4D.drawMarker(
+                currentLocationMarker,
+                currentLat!!,
+                currentLng!!,
+                R.drawable.ic_location
+            )
             observe()
         }
     }

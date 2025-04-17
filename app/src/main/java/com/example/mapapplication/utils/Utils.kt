@@ -1,12 +1,7 @@
-package com.example.mapapplication
+package com.example.mapapplication.utils
 
-import android.location.Location
-import vn.map4d.map.annotations.MFBitmapDescriptorFactory
-import vn.map4d.map.annotations.MFMarker
-import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.camera.MFCameraPosition
 import vn.map4d.map.camera.MFCameraUpdateFactory
-import vn.map4d.map.core.MFCoordinateBounds
 import vn.map4d.map.core.Map4D
 import vn.map4d.types.MFLocationCoordinate
 

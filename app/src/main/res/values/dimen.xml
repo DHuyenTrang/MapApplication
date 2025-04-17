@@ -8,10 +8,10 @@
     <dimen name="base_content_margin_title">4dp</dimen>
     <dimen name="session_margin">24dp</dimen>
 
-    <dimen name="bottom_sheet_peek_height">76dp</dimen>
+    <dimen name="bottom_sheet_peek_height">130dp</dimen>
     <dimen name="bottom_sheet_radius">10dp</dimen>
     <dimen name="bottom_sheet_padding_vertical">12dp</dimen>
-    <dimen name="bottom_sheet_margin">90dp</dimen>
+    <dimen name="bottom_sheet_margin">150dp</dimen>
 
     <dimen name="search_bar_height">48dp</dimen>
     <dimen name="search_bar_radius">10dp</dimen>

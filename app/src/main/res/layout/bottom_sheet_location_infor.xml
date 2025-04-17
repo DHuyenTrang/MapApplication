@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_coordinator_layout"
+    app:behavior_peekHeight="210dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="5dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_drag_handle" />
+
+    <TextView
+        android:id="@+id/tv_name_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Banh mi hoi an"
+        android:textAppearance="@style/Gofa.TextXL.Bold" />
+
+    <TextView
+        android:id="@+id/tv_address_location"
+        app:drawableStartCompat="@drawable/ic_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="10dp"
+        android:text="Km10, Tran Phu, Ha Dong, Ha Noi"
+        android:textAppearance="@style/Gofa.TextBase" />
+
+    <Button
+        android:id="@+id/btn_route"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_button_primary"
+        android:text="Xem đường đi"
+        android:textAppearance="@style/Gofa.TextBase.Bold" />
+</LinearLayout>

@@ -15,20 +15,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <View
+            android:layout_width="40dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
             android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:background="@drawable/drag_container" />
-
+            android:background="@drawable/bg_drag_handle" />
         <!--Search bar header-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingHorizontal="@dimen/activity_padding_horizontal">
-
             <TextView
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -42,7 +41,7 @@
                 android:drawablePadding="@dimen/search_bar_padding"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="@dimen/search_bar_padding"
-                android:text="Tìm kiếm địa điểm"
+                android:text="Tìm kiếm địa chỉ"
                 android:textAppearance="@style/Gofa.TextBase"
                 android:textColorHint="@color/onSurfaceVariant"
                 android:textColor="@color/onSurfaceVariant" />
@@ -55,6 +54,77 @@
                 android:layout_height="56dp"
                 app:icon="@drawable/ic_setting"/>
         </LinearLayout>
-
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="@dimen/activity_padding_vertical">
+                <TextView
+                    android:id="@+id/tv_petrol"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trạm xăng"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:drawablePadding="10dp"
+                    app:drawableStartCompat="@drawable/ic_cay_xang"
+                    android:background="@drawable/bg_item_category"
+                    android:layout_marginEnd="8dp"
+                    android:paddingVertical="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp"/>
+                <TextView
+                    android:id="@+id/tv_restaurant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhà hàng"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:drawablePadding="10dp"
+                    app:drawableStartCompat="@drawable/ic_restaurant"
+                    android:background="@drawable/bg_item_category"
+                    android:layout_marginEnd="8dp"
+                    android:paddingVertical="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp"/>
+                <TextView
+                    android:id="@+id/tv_cafe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cà phê"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:drawablePadding="10dp"
+                    app:drawableStartCompat="@drawable/ic_cafe"
+                    android:background="@drawable/bg_item_category"
+                    android:layout_marginEnd="8dp"
+                    android:paddingVertical="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp"/>
+                <TextView
+                    android:id="@+id/tv_atm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ATM"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:drawablePadding="10dp"
+                    app:drawableStartCompat="@drawable/ic_atm"
+                    android:background="@drawable/bg_item_category"
+                    android:layout_marginEnd="8dp"
+                    android:paddingVertical="6dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="12dp"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+        <include
+            android:id="@+id/widget_session_place_type"
+            layout="@layout/widget_session_place_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+    <!--    </androidx.core.widget.NestedScrollView>-->
 </LinearLayout>

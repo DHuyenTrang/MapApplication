@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="padding_end_icon_button">20dp</dimen>
+    <dimen name="margin_coordinator_layout">20dp</dimen>
+    <dimen name="divider_margin_start">52dp</dimen>
+    <dimen name="divider_margin_end">4dp</dimen>
+    <dimen name="gofa_circle_width">100dp</dimen>
+    <dimen name="inside_circle_width">24dp</dimen>
+</resources>
