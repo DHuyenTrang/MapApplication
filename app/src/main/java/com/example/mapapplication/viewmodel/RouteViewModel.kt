@@ -8,6 +8,7 @@ import com.example.mapapplication.manager.TokenManager
 import com.example.mapapplication.data.response.Step
 import com.example.mapapplication.model.PathInfor
 import com.example.mapapplication.repository.RouteRepository
+import com.example.mapapplication.utils.Constant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,16 +37,21 @@ class RouteViewModel(
     private val _pathInfor = MutableStateFlow<PathInfor?>(null)
     val pathInfor: StateFlow<PathInfor?> = _pathInfor.asStateFlow()
 
+    private val _locationStep = MutableStateFlow<String?>(null)
+    val locationStep: StateFlow<String?> = _locationStep.asStateFlow()
+
+    private val _typeSign = MutableStateFlow<Int?>(null)
+    val typeSign: StateFlow<Int?> = _typeSign.asStateFlow()
+
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
     fun calculateDistanceRemaining(location: Location) {
         val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)
-        val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
+        currentStep?.maneuver?.instruction?.let { getTypeSign(it) }
 
-        Log.d("RouteViewModel", "Navigation step index: ${_navigationStepIndex.value}")
-        Log.d("RouteViewModel", "Next point: ${nextPoint?.latitude} ${nextPoint?.longitude}")
+        val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
         Log.d("RouteViewModel", "Distance: $distance")
 
@@ -79,7 +85,7 @@ class RouteViewModel(
                     // emit steps to route turn by turn
                     _steps.value = steps
                     for (step in steps ?: emptyList()) {
-                        Log.d("Route", "Step: ${step.maneuver.location}")
+                        Log.d("Route", "Step: ${step.maneuver.instruction}")
                     }
 
                     // emit location, duration
@@ -90,6 +96,26 @@ class RouteViewModel(
             } else {
                 Log.e("Route", "searchRoute failed: ${response.errorBody()?.string()}")
 
+            }
+        }
+    }
+
+    private fun getTypeSign(instruction: String) {
+        if (instruction.contains("U-turn")) {
+            if (instruction.contains("left")) {
+                _typeSign.value = Constant.TYPE_SIGN_U_LEFT
+            } else {
+                _typeSign.value = Constant.TYPE_SIGN_U_RIGHT
+            }
+        }
+        else {
+            if (instruction.contains("left")) {
+                _typeSign.value = Constant.TYPE_SIGN_LEFT
+            } else if (instruction.contains("right")) {
+                _typeSign.value = Constant.TYPE_SIGN_RIGHT
+            }
+            else {
+                _typeSign.value = null
             }
         }
     }

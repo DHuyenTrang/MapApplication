@@ -14,7 +14,6 @@ import com.example.mapapplication.R
 import com.example.mapapplication.utils.Utils
 import com.example.mapapplication.databinding.FragmentLocationInforBinding
 import com.example.mapapplication.utils.extension.drawMarker
-import com.example.mapapplication.utils.extension.moveCameraToLocation
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -110,6 +109,19 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
                     )
                     binding.bottomSheetDashboard.tvNameLocation.text = it.name
                     binding.bottomSheetDashboard.tvAddressLocation.text = it.address
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            locationDetailViewModel.isLoading.collectLatest {
+                if (it) {
+                    binding.pgLoading.visibility = View.VISIBLE
+                    binding.mapView.visibility = View.GONE
+                    binding.layoutBottomSheet.visibility = View.GONE
+                } else {
+                    binding.pgLoading.visibility = View.GONE
+                    binding.mapView.visibility = View.VISIBLE
+                    binding.layoutBottomSheet.visibility = View.VISIBLE
                 }
             }
         }

@@ -14,15 +14,21 @@ import java.lang.Thread.State
 class LocationDetailViewModel(
     private val locationSearchRepository: LocationSearchRepository,
 ) : ViewModel(){
-    private var _locationDetail = MutableStateFlow<LocationDetail?>(null)
+    private val _locationDetail = MutableStateFlow<LocationDetail?>(null)
     val locationDetail : StateFlow<LocationDetail?> = _locationDetail.asStateFlow()
+
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading : StateFlow<Boolean> = _isLoading.asStateFlow()
 
     fun fetchLocationDetail(placeId: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             val response = locationSearchRepository.getLocationDetail(placeId)
             if (response.isSuccessful) {
                 _locationDetail.value = response.body()?.result?.mapToLocationDetail()
                 Log.d("LocationDetailViewModel", "fetchLocationDetail: ${_locationDetail.value}")
+
+                _isLoading.value = false
             }
         }
     }

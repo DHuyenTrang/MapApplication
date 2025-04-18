@@ -8,13 +8,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentNavigationBinding
 import com.example.mapapplication.utils.extension.drawRoute
+import com.example.mapapplication.utils.extension.toDistance
+import com.example.mapapplication.utils.extension.toDuration
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -29,6 +33,9 @@ import vn.map4d.map.core.MFMapType
 import vn.map4d.map.core.Map4D
 import vn.map4d.map.core.OnMapReadyCallback
 import vn.map4d.types.MFLocationCoordinate
+import java.text.SimpleDateFormat
+import java.time.LocalTime
+import java.util.Date
 
 class NavigationFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map4D: Map4D
@@ -62,21 +69,42 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setupUI() {
+        val bottomSheet = binding.bottomSheetDashboard.root
+        val bottomSheetBehavior =
+            BottomSheetBehavior.from<LinearLayout>(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         // close
-        binding.btnClose.setOnClickListener {
+        binding.bottomSheetDashboard.btnClose.setOnClickListener {
             currentLocationMarker?.remove()
             currentPolyline?.remove()
             routeViewModel.setNavigationStepIndex(0)
             findNavController().navigateUp()
         }
-
-        // instruction
+        // distance remaining
         viewLifecycleOwner.lifecycleScope.launch {
-            routeViewModel.navigationStepIndex.collectLatest {
-                val step = routeViewModel.steps.value?.get(it)
-                val instruction = step?.maneuver?.instruction
-                binding.tvInstruction.text = instruction
-
+            routeViewModel.distanceRemaining.collectLatest { distance ->
+                if (distance != null) {
+                    binding.bottomSheetDashboard.tvDistanceStepRemaining.text = distance.toDistance()               }
+            }
+        }
+        // sign
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.typeSign.collectLatest { sign ->
+                if (sign != null) {
+                    binding.bottomSheetDashboard.icNavigation.setImageResource(sign)
+                }
+            }
+        }
+        // currentTime
+        val currentTime = SimpleDateFormat("HH:mm").format(Date())
+        binding.bottomSheetDashboard.tvCurrentTime.text = currentTime
+        // duration and place
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.pathInfor.collect { pathInfor ->
+                pathInfor?.let {
+                    binding.bottomSheetDashboard.tvDistance.text = it.distance.toDistance()
+                    binding.bottomSheetDashboard.tvDuration.text = it.duration.toDuration()
+                }
             }
         }
     }

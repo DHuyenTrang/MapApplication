@@ -16,6 +16,7 @@ import com.example.mapapplication.databinding.FragmentMapBinding
 import com.example.mapapplication.utils.extension.drawMarker
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
@@ -73,12 +74,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private fun setUpCurrentLocation() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val location = currentLocationViewModel.currentLocation.value
-            if (location != null) {
-                currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
-                moveCameraToLocation(map4D, location.latitude, location.longitude, 0.0)
-            } else {
-                moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 0.0)
+            currentLocationViewModel.currentLocation.collectLatest {location ->
+                if (location != null) {
+                    currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
+                    moveCameraToLocation(map4D, location.latitude, location.longitude, 0.0)
+                } else {
+                    moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 0.0)
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ fun Double.toDuration(): String {
 
 fun Double.toDistance(): String {
     val kilometers = this / 1000
+    if (kilometers < 1) return "${this.roundToInt()} m"
     val distance = String.format("%.1f km", kilometers)
     return distance
 }
