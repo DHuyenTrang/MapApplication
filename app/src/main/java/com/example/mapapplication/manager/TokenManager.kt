@@ -3,10 +3,18 @@ package com.example.mapapplication.manager
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 class TokenManager (context: Context) {
     private val authPrefs: SharedPreferences = context.getSharedPreferences("authPrefs", Context.MODE_PRIVATE)
     private val userPrefs: SharedPreferences = context.getSharedPreferences("userPrefs", Context.MODE_PRIVATE)
+
+    private val _logoutFlow = MutableSharedFlow<Unit>(replay = 0)
+    val logoutFlow = _logoutFlow.asSharedFlow()
 
     fun saveToken(accessToken: String, refreshToken: String) {
         authPrefs.edit().apply {
@@ -42,5 +50,12 @@ class TokenManager (context: Context) {
         userPrefs.edit().remove("user_id").apply()
 
         Log.d("AUTH", "Delete Token")
+    }
+
+    fun logout() {
+        clearToken()
+        CoroutineScope(Dispatchers.Main).launch {
+            _logoutFlow.emit(Unit)
+        }
     }
 }

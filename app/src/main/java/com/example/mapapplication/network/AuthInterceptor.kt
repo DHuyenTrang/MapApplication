@@ -19,13 +19,10 @@ class AuthInterceptor(
 
         if (response.code == 644) { // log out
             Log.d("AuthInterceptor", "Received 644 - logging out")
-            tokenManager.clearToken()
+            tokenManager.logout()
         }
-
-
         return response
     }
-
 //    private fun refreshToken(): String? {
 //        val refreshToken = tokenManager.getRefreshToken() ?: return null
 //

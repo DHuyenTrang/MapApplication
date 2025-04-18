@@ -14,6 +14,7 @@ import com.example.mapapplication.R
 import com.example.mapapplication.utils.Utils
 import com.example.mapapplication.databinding.FragmentLocationInforBinding
 import com.example.mapapplication.utils.extension.drawMarker
+import com.example.mapapplication.utils.extension.moveCameraToLocation
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -87,7 +88,8 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
                     "currentLat" to currentLat,
                     "currentLng" to currentLng,
                     "destinationLat" to destinationLat,
-                    "destinationLng" to destinationLng
+                    "destinationLng" to destinationLng,
+                    "nameLocation" to binding.bottomSheetDashboard.tvNameLocation.text
                 )
             )
         }

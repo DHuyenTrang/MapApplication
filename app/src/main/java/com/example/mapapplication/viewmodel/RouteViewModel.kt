@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapapplication.manager.TokenManager
 import com.example.mapapplication.data.response.Step
+import com.example.mapapplication.model.PathInfor
 import com.example.mapapplication.repository.RouteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,31 +21,24 @@ class RouteViewModel(
     private val _coordinates = MutableStateFlow<List<MFLocationCoordinate>>(emptyList())
     val coordinates: StateFlow<List<MFLocationCoordinate>> = _coordinates.asStateFlow()
 
-    private var _isLoading = MutableStateFlow<Boolean?>(null)
+    private val _isLoading = MutableStateFlow<Boolean?>(null)
     val isLoading: StateFlow<Boolean?> = _isLoading.asStateFlow()
 
-    private var _steps = MutableStateFlow<List<Step>?>(null)
+    private val _steps = MutableStateFlow<List<Step>?>(null)
     val steps: StateFlow<List<Step>?> = _steps.asStateFlow()
 
-    private var _navigationStepIndex = MutableStateFlow<Int>(0)
+    private val _navigationStepIndex = MutableStateFlow<Int>(0)
     val navigationStepIndex: StateFlow<Int> = _navigationStepIndex.asStateFlow()
 
-    private var _distanceRemaining = MutableStateFlow<Double?>(null)
+    private val _distanceRemaining = MutableStateFlow<Double?>(null)
     val distanceRemaining: StateFlow<Double?> = _distanceRemaining.asStateFlow()
+
+    private val _pathInfor = MutableStateFlow<PathInfor?>(null)
+    val pathInfor: StateFlow<PathInfor?> = _pathInfor.asStateFlow()
 
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
-
-//    fun getIconForManeuver(maneuverType: String): Int {
-//        return when (maneuverType) {
-//            "turn-left" -> R.drawable.ic_turn_left
-//            "right" -> R.drawable.ic_turn_right_
-//            "straight" -> R.drawable.ic_straight
-//            "uturn" ->
-//            else -> R.drawable.ic_navigation
-//        }
-//    }
     fun calculateDistanceRemaining(location: Location) {
         val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)
@@ -69,7 +63,7 @@ class RouteViewModel(
 
     fun searchRoute(bearings: Int, dstLat: Double, dstLng: Double, srcLat: Double, srcLng: Double) {
         if (_isLoading.value == true) return
-        Log.d("RouteViewModel", "in searchRoute")
+        Log.d("Route", "in searchRoute")
         _isLoading.value = true
         Log.d("Route", "Is loading: ${_isLoading.value}")
         viewModelScope.launch {
@@ -77,23 +71,24 @@ class RouteViewModel(
             if (response.isSuccessful) {
                 // first route
                 response.body()?.let {
-                    val steps = it.routes
-                        .firstOrNull()
-                        ?.legs?.firstOrNull()
-                        ?.steps
+
                     // emit coordinates to draw route
+                    val steps = it.routes.firstOrNull()?.legs?.firstOrNull()?.steps
                     _coordinates.value = getCoordinatesFromStep(steps)
 
                     // emit steps to route turn by turn
                     _steps.value = steps
                     for (step in steps ?: emptyList()) {
-                        Log.d("RouteViewModel", "Step: ${step.maneuver.location}")
+                        Log.d("Route", "Step: ${step.maneuver.location}")
                     }
+
+                    // emit location, duration
+                    _pathInfor.value = it.routes.firstOrNull()?.mapToPathInfo()
                 }
                 _isLoading.value = false
                 Log.d("Route", "Is loading: ${_isLoading.value}")
             } else {
-                Log.e("RouteViewModel", "searchRoute failed: ${response.errorBody()?.string()}")
+                Log.e("Route", "searchRoute failed: ${response.errorBody()?.string()}")
 
             }
         }

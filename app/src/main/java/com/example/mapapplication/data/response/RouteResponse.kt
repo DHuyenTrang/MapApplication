@@ -1,11 +1,19 @@
 package com.example.mapapplication.data.response
 
+import com.example.mapapplication.model.PathInfor
+
 data class RouteResponse(
     val routes: List<Route>
 ) {}
 data class Route(
-    val legs: List<Leg>
-) {}
+    val legs: List<Leg>,
+    val distance: Double,
+    val duration: Double,
+) {
+    fun mapToPathInfo(): PathInfor {
+        return PathInfor(0, distance, duration)
+    }
+}
  data class Leg(
      val steps: List<Step>
  ) {}

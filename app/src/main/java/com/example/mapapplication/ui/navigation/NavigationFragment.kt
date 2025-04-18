@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentNavigationBinding
+import com.example.mapapplication.utils.extension.drawRoute
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -179,20 +180,14 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
     private fun drawRoute() {
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.coordinates.collect { coordinates ->
-                getRouteToDraw(coordinates, Color.BLUE)
+                setUpPath(coordinates)
             }
         }
     }
 
-    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>, color: Int) {
+    private fun setUpPath(coordinates: List<MFLocationCoordinate>) {
         if (coordinates.isNotEmpty()) {
-            currentPolyline?.remove()
-            currentPolyline = map4D.addPolyline(
-                MFPolylineOptions().add(*coordinates.toTypedArray())
-                    .color(color)
-                    .width(20.0f)
-                    .zIndex(10f)
-            )
+            currentPolyline = map4D.drawRoute(currentPolyline, coordinates)
         }
     }
 
@@ -206,7 +201,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             map4D = p0
             routing()
             drawRoute()
-            map4D.mapType = MFMapType.ROADMAP
+            map4D.mapType = MFMapType.MAP3D
         }
     }
 }

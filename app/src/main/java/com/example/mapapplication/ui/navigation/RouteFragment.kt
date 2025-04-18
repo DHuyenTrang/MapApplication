@@ -12,6 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentRouteBinding
 import com.example.mapapplication.utils.extension.drawMarker
+import com.example.mapapplication.utils.extension.drawRoute
+import com.example.mapapplication.utils.extension.toDistance
+import com.example.mapapplication.utils.extension.toDuration
 import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -71,30 +74,34 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
         destinationLat = arguments?.getDouble("destinationLat")
         destinationLng = arguments?.getDouble("destinationLng")
         routeViewModel.searchRoute(180, destinationLat!!, destinationLng!!, currentLat!!, currentLng!!)
-        Log.d("RouteFragment", "currentLat: $currentLat, currentLng: $currentLng, destinationLat: $destinationLat, destinationLng: $destinationLng")
+
+        binding.tvDestination.text = arguments?.getString("nameLocation")
+
     }
 
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.coordinates.collect { coordinates ->
-                getRouteToDraw(coordinates)
+                setUpPath(coordinates)
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.pathInfor.collect { pathInfor ->
+                pathInfor?.let {
+                    binding.tvDistance.text = it.distance.toDistance()
+                    binding.tvDuration.text = it.duration.toDuration()
+                }
             }
         }
     }
 
-    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>) {
+    private fun setUpPath(coordinates: List<MFLocationCoordinate>) {
         if (coordinates.isNotEmpty()) {
-            currentPolyline?.remove()
-            currentPolyline = map4D.addPolyline(
-                MFPolylineOptions().add(*coordinates.toTypedArray())
-                    .color(Color.BLUE)
-                    .width(6.0f)
-                    .zIndex(10f)
-            )
+            currentPolyline = map4D.drawRoute(currentPolyline, coordinates)
             val builder = MFCoordinateBounds.Builder()
             coordinates.forEach { builder.include(it) }
             val bounds = builder.build()
-            map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 100))
+            map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 0, 0, 0, 300))
         }
     }
 
