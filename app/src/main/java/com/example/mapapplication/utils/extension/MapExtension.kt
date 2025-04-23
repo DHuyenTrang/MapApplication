@@ -2,6 +2,7 @@ package com.example.mapapplication.utils.extension
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.os.Looper
 import com.example.mapapplication.R
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
 import vn.map4d.map.annotations.MFMarker
@@ -56,4 +57,48 @@ fun Map4D.drawRoute(currentPolyline: MFPolyline?, coordinates: List<MFLocationCo
     }
     else
         return null
+}
+
+fun Map4D.animateCameraSmoothlyTo(
+    from: MFLocationCoordinate,
+    to: MFLocationCoordinate,
+    newBearing: Double
+) {
+    val map4D = this
+    val handler = android.os.Handler(Looper.getMainLooper())
+    val startTime = System.currentTimeMillis()
+    val duration = 1000L
+
+    handler.post(object : Runnable {
+        override fun run() {
+            val elapsed = System.currentTimeMillis() - startTime
+            val t = (elapsed / duration.toFloat()).coerceIn(0f, 1f)
+
+            val lat = from.latitude + (to.latitude - from.latitude) * t
+            val lng = from.longitude + (to.longitude - from.longitude) * t
+
+            val interpolated = MFLocationCoordinate(lat, lng)
+
+            val currentBearing = map4D.cameraPosition.bearing ?: 0.0
+            val bearing = interpolateBearing(currentBearing, newBearing, t)
+
+            val cameraPosition = MFCameraPosition.Builder()
+                .target(interpolated)
+                .zoom(20.0)
+                .bearing(bearing)
+                .tilt(45.0)
+                .build()
+
+            map4D.moveCamera(MFCameraUpdateFactory.newCameraPosition(cameraPosition))
+
+            if (t < 1f) {
+                handler.postDelayed(this, 16) // ~60 FPS
+            }
+        }
+    })
+}
+
+private fun interpolateBearing(from: Double, to: Double, t: Float): Double {
+    val delta = ((to - from + 540) % 360) - 180
+    return (from + delta * t + 360) % 360
 }

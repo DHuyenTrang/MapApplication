@@ -9,6 +9,7 @@ import com.example.mapapplication.data.response.Step
 import com.example.mapapplication.model.PathInfor
 import com.example.mapapplication.repository.RouteRepository
 import com.example.mapapplication.utils.Constant
+import com.example.mapapplication.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +44,9 @@ class RouteViewModel(
     private val _typeSign = MutableStateFlow<Int?>(null)
     val typeSign: StateFlow<Int?> = _typeSign.asStateFlow()
 
+    private val _isDeviated = MutableStateFlow<Boolean>(false)
+    val isDeviated: StateFlow<Boolean> = _isDeviated.asStateFlow()
+
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
@@ -53,7 +57,7 @@ class RouteViewModel(
 
         val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
-        Log.d("RouteViewModel", "Distance: $distance")
+//        Log.d("RouteViewModel", "Distance: $distance")
 
         _distanceRemaining.value = distance
         if (distance <= 10) {
@@ -62,9 +66,29 @@ class RouteViewModel(
     }
 
     private fun updateNavigationStepIndex() {
-            if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
-                _navigationStepIndex.value++
+        if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
+            _navigationStepIndex.value++
+            Log.d("RouteViewModel", "Advanced to step ${_navigationStepIndex.value}")
+        }
+    }
+
+    fun checkRouteDeviation(location: Location) {
+        if (location.accuracy > 20) {
+            Log.d("Route", "Low GPS accuracy: ${location.accuracy} meters, ignoring update")
+            return
+        }
+        val stepCoordinates = getCoordinatesFromStep(steps.value)
+
+        val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
+        val result = Utils.calculateDistanceToRoad(currentLocation, stepCoordinates)
+        Log.d("Route", "Distance to road: $result")
+
+        if (result != null) {
+            if (result >= 50.0) {
+                Log.d("Route", "User deviated from the route")
+                _isDeviated.value = true
             }
+        }
     }
 
     fun searchRoute(bearings: Int, dstLat: Double, dstLng: Double, srcLat: Double, srcLng: Double) {
@@ -75,6 +99,7 @@ class RouteViewModel(
         viewModelScope.launch {
             val response = routeRepository.searchRoute(bearings, dstLat, dstLng, srcLat, srcLng)
             if (response.isSuccessful) {
+                _isDeviated.value = false
                 // first route
                 response.body()?.let {
 

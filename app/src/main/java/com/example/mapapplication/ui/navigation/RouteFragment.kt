@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
@@ -66,14 +67,26 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
             findNavController().popBackStack()
         }
         binding.btnStartNavigation.setOnClickListener {
-            findNavController().navigate(R.id.action_routeFragment_to_navigationFragment)
+            findNavController().navigate(
+                R.id.action_routeFragment_to_navigationFragment,
+                args = bundleOf(
+                    "destinationLat" to destinationLat,
+                    "destinationLng" to destinationLng,
+                )
+            )
         }
 
         currentLat = arguments?.getDouble("currentLat")
         currentLng = arguments?.getDouble("currentLng")
         destinationLat = arguments?.getDouble("destinationLat")
         destinationLng = arguments?.getDouble("destinationLng")
-        routeViewModel.searchRoute(180, destinationLat!!, destinationLng!!, currentLat!!, currentLng!!)
+        routeViewModel.searchRoute(
+            180,
+            destinationLat!!,
+            destinationLng!!,
+            currentLat!!,
+            currentLng!!
+        )
 
         binding.tvDestination.text = arguments?.getString("nameLocation")
 
@@ -114,8 +127,18 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            currentLocationMarker = map4D.drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
-            destinationMarker = map4D.drawMarker(destinationMarker, destinationLat!!, destinationLng!!, R.drawable.ic_pin_marker)
+            currentLocationMarker = map4D.drawMarker(
+                currentLocationMarker,
+                currentLat!!,
+                currentLng!!,
+                R.drawable.ic_location
+            )
+            destinationMarker = map4D.drawMarker(
+                destinationMarker,
+                destinationLat!!,
+                destinationLng!!,
+                R.drawable.ic_pin_marker
+            )
             observe()
         }
     }
