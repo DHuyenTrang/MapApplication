@@ -3,6 +3,7 @@ package com.example.mapapplication.network
 import com.example.mapapplication.data.request.UserRequest
 import com.example.mapapplication.data.response.LocationDetailResponse
 import com.example.mapapplication.data.response.LocationSearchResponse
+import com.example.mapapplication.data.response.RefreshTokenResponse
 import com.example.mapapplication.data.response.RouteResponse
 import com.example.mapapplication.data.response.UserResponse
 import retrofit2.Response
@@ -17,6 +18,11 @@ interface APIService {
     suspend fun login(
         @Body userRequest: UserRequest
     ): Response<UserResponse>
+
+    @POST("/v5/auth/refresh-token-new")
+    suspend fun refreshToken(
+        @Body refresh_token: String
+    ): Response<RefreshTokenResponse>
 
     @GET("/v5/api/routing/search-route")
     suspend fun searchRoute(

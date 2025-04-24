@@ -1,9 +1,212 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.MapApplication" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Base.Theme.Gofa" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/sf_pro_text</item>
+
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorOnSecondary">@color/onPrimary</item>
+        <!--for material Icon button-->
+        <item name="colorSecondaryContainer">@color/surfaceContainer</item>
+        <!--for material card view-->
+        <item name="colorSurfaceVariant">@color/surfaceContainer</item>
+        <item name="background">@color/background</item>
+
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
+        <item name="android:colorAccent">@color/error</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/primary
+        </item>
     </style>
 
-    <style name="Theme.MapApplication" parent="Base.Theme.MapApplication" />
+    <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:navigationBarColor">@color/primary50</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="android:statusBarColor">@color/primary50</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+
+    <style name="Theme.Gofa" parent="Base.Theme.Gofa" />
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="Gofa.TextField" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxBackgroundColor">@color/surfaceContainer</item>
+        <item name="boxCornerRadiusTopStart">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/text_input_border_radius</item>
+    </style>
+
+    <style name="Gofa.SearchBar" parent="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu">
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxBackgroundColor">@color/surfaceContainer</item>
+        <item name="boxCornerRadiusTopStart">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/text_input_border_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/text_input_border_radius</item>
+    </style>
+
+    <style name="Gofa.Button" parent="@style/Widget.MaterialComponents.Button">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textAppearance">@style/Gofa.TextBase.Bold</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="cornerRadius">68dp</item>
+    </style>
+
+    <style name="Gofa.SignInButton" parent="@style/Widget.MaterialComponents.Button">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textAppearance">@style/Gofa.TextBase.Bold</item>
+        <item name="android:textColor">@color/onInfo</item>
+        <item name="backgroundTint">@color/info</item>
+        <item name="cornerRadius">68dp</item>
+    </style>
+
+    <style name="Gofa.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:colorBackground">@color/transparent</item>
+    </style>
+
+    <style name="Gofa.Dropdown" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:colorBackground">@color/transparent</item>
+    </style>
+
+    <style name="Gofa.Button.Error" parent="@style/Widget.MaterialComponents.Button">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textAppearance">@style/Gofa.TextXs.Bold</item>
+        <item name="android:textColor">@color/onError</item>
+        <item name="backgroundTint">@color/error</item>
+        <item name="cornerRadius">4dp</item>
+    </style>
+
+    <style name="Gofa.OutlinedButton" parent="@style/Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textAppearance">@style/Gofa.TextBase.Bold</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="cornerRadius">68dp</item>
+    </style>
+
+    <style name="Gofa.TextButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textAppearance">@style/Gofa.TextBase.Bold</item>
+    </style>
+
+    <style name="Gofa.TextButton.Primary" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:textAppearance">@style/Gofa.TextBase.Bold</item>
+    </style>
+
+    <style name="Gofa.IconButton" parent="@style/Widget.Material3.Button.IconButton.Filled.Tonal">
+        <item name="iconTint">@color/primary</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="Gofa.IconButton.Outline" parent="@style/Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/onSurfaceVariant</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">24dp</item>
+    </style>
+
+    <style name="Gofa.IconButton.Error" parent="@style/Widget.Material3.Button.IconButton">
+        <item name="iconSize">32dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/error</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="Gofa.IconButton.Primary" parent="@style/Widget.Material3.Button.IconButton">
+        <item name="iconSize">32dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconTint">@color/primary</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <style name="Gofa.CardView" parent="@style/Widget.Material3.CardView.Filled">
+        <item name="cornerRadius">@dimen/card_border_radius</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="Gofa.CardView.Outline" parent="@style/Widget.Material3.CardView.Elevated">
+        <item name="cornerRadius">@dimen/text_input_border_radius</item>
+        <item name="android:clickable">true</item>
+        <item name="strokeWidth">4dp</item>
+        <item name="strokeColor">@color/outlineVariant</item>
+        <item name="cardBackgroundColor">#00000000</item>
+    </style>
+
+    <style name="Gofa.Switch" parent="@style/Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="switchPadding">0dp</item>
+        <item name="thumbIconSize">24dp</item>
+    </style>
+
+    <style name="Gofa.Slider" parent="@style/Widget.Material3.Slider">
+        <item name="trackColorActive">@color/primary</item>
+        <item name="trackColorInactive">@color/surfaceContainerHigh</item>
+    </style>
+
+    <style name="Gofa.NavigationSlider" parent="@style/Widget.Material3.Slider">
+        <item name="trackColorActive">@color/surfaceContainerHigh</item>
+        <item name="trackColorInactive">@color/primaryContainer</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="Gofa.CustomBottomSheetDialog" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:background">@drawable/rounded_bottom_sheet_dialog</item>
+    </style>
+
+    <style name="CustomDatePicker" parent="android:Widget.DatePicker">
+        <item name="android:datePickerMode">calendar</item>
+    </style>
+
+    <style name="Gofa.PinView" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textCursorDrawable">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandle">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandleLeft">@drawable/pv_invisible_image</item>
+        <item name="android:textSelectHandleRight">@drawable/pv_invisible_image</item>
+        <item name="android:inputType">number</item>
+        <item name="android:textColor">@color/onSurface</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

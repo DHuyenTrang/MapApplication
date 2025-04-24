@@ -7,64 +7,47 @@
     android:background="@color/white"
     tools:context=".ui.detail.LocationInforFragment">
 
+    <ProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/pgLoading"
+        />
     <vn.map4d.map.core.MFMapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrrow_back"
-        android:layout_margin="30dp"
-        app:backgroundTint="@color/white"
-        app:tint="@color/black"
-        android:id="@+id/btn_back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        android:layout_height="match_parent"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        map:mapId="6808c0ec5d65bdb7b81fdedc"/>
 
-    <LinearLayout
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_back"
+        style="@style/Gofa.IconButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="@dimen/activity_padding_horizontal"
+        app:icon="@drawable/ic_back"
+        app:iconTint="@color/onSurface"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@color/white">
-        <View
-            android:layout_width="40dp"
-            android:layout_height="5dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="12dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_drag_handle" />
-        <TextView
-            android:id="@+id/tv_name_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Banh mi hoi an"
-            android:textColor="@color/text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            />
-        <TextView
-            android:id="@+id/tv_address_location"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Km10, Tran Phu, Ha Dong, Ha Noi"
-            android:textSize="15sp"
-            android:textColor="@color/text_secondary"
-            app:drawableStartCompat="@drawable/ic_location_here"
-            android:drawablePadding="10dp"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_button_primary"
-            android:layout_marginTop="20dp"
-            android:id="@+id/btn_route"
-            android:text="Xem đường đi"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            />
-    </LinearLayout>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_height="0dp">
+        <include
+            android:id="@+id/bottom_sheet_dashboard"
+            layout="@layout/bottom_sheet_location_infor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

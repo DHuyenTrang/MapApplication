@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="size" format="dimension" />
+    <attr name="title" format="string" />
+    <attr name="subtitle" format="string" />
+    <attr name="icon" format="reference" />
+    <attr name="value" format="string" />
+    <attr name="arrowIcon" format="boolean" />
+    <attr name="borderType" format="enum">
+        <enum name="all" value="0" />
+        <enum name="top" value="1" />
+        <enum name="bottom" value="2" />
+        <enum name="none" value="3" />
+    </attr>
+
+    <declare-styleable name="PinViewTheme">
+        <attr name="pinViewStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="PinView">
+        <attr name="itemCount" format="integer" />
+        <attr name="itemWidth" format="dimension" />
+        <attr name="itemHeight" format="dimension" />
+        <attr name="itemRadius" format="dimension" />
+        <attr name="itemSpacing" format="dimension" />
+        <attr name="lineWidth" format="dimension" />
+        <attr name="lineColor" format="reference|color" />
+        <attr name="viewType" format="enum">
+            <enum name="rectangle" value="0" />
+            <enum name="line" value="1" />
+            <enum name="none" value="2" />
+        </attr>
+        <attr name="android:cursorVisible" />
+        <attr name="cursorWidth" format="dimension" />
+        <attr name="cursorColor" format="reference|color" />
+        <attr name="android:itemBackground" />
+        <attr name="hideLineWhenFilled" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GofaAvatar">
+        <attr name="size" />
+        <attr name="title" />
+        <attr name="avatarUri" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="GofaAppBar">
+        <attr name="title" />
+        <attr name="backButton" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GofaCircleIconButton">
+        <attr name="iconSize" format="dimension" />
+        <attr name="size" />
+        <attr name="isActive" format="boolean" />
+        <attr name="isColorIcon" format="boolean" />
+        <attr name="icon" />
+
+    </declare-styleable><declare-styleable name="GofaSpeedBoard">
+    <attr name="size" />
+    <attr name="speedLimit" format="integer" />
+    <attr name="speed" format="integer" />
+    <attr name="speedUnit" format="string" />
+</declare-styleable>
+    <declare-styleable name="VisualizerView">
+        <attr name="chunkWidth" format="dimension" />
+        <attr name="chunkMaxHeight" format="dimension" />
+        <attr name="chunkMinHeight" format="dimension" />
+        <attr name="chunkSpace" format="dimension" />
+        <attr name="chunkColor" format="color" />
+        <attr name="chunkRoundedCorners" format="boolean" />
+        <!--        <attr name="chunkAlignTo" format="enum">-->
+        <!--            <enum name="center" value="1" />-->
+        <!--            <enum name="bottom" value="2" />-->
+        <!--        </attr>-->
+        <!--        <attr name="direction" format="enum">-->
+        <!--            <enum name="rightToLeft" value="1" />-->
+        <!--            <enum name="leftToRight" value="2" />-->
+        <!--        </attr>-->
+        <attr name="chunkSoftTransition" format="boolean" />
+        <attr name="isShortChunkView" format="boolean" />
+    </declare-styleable>
+
+    <!--    <declare-styleable name="VisualizerView">-->
+    <!--        <attr name="chunkSpace" format="float" />-->
+    <!--        <attr name="chunkMaxHeight" format="float" />-->
+    <!--        <attr name="chunkMinHeight" format="float" />-->
+    <!--        <attr name="chunkRoundedCorners" format="boolean" />-->
+    <!--        <attr name="chunkWidth" format="float" />-->
+    <!--        <attr name="chunkColor" format="integer" />-->
+    <!--        <attr name="chunkAlignTo" format="enum">-->
+    <!--            <enum name="center" value="1" />-->
+    <!--            <enum name="bottom" value="2" />-->
+    <!--        </attr>-->
+    <!--        <attr name="direction" format="enum">-->
+    <!--            <enum name="rightToLeft" value="1" />-->
+    <!--            <enum name="leftToRight" value="2" />-->
+    <!--        </attr>-->
+    <!--        <attr name="chunkSoftTransition" format="boolean" />-->
+    <!--    </declare-styleable>-->
+
+    <declare-styleable name="DistanceBoard">
+        <attr name="icon" />
+        <attr name="boardSize" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="LaneView">
+        <attr name="lanePaddingVertical" format="dimension" />
+        <attr name="lanePaddingHorizontal" format="dimension" />
+        <attr name="laneItemSize" format="dimension" />
+        <attr name="laneItemSpace" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="InnerShadowView">
+        <!--        <attr name="size" />-->
+        <attr name="isAnimation" format="boolean" />
+        <attr name="inset" format="float" />
+        <!--        <attr name="speed" format="integer" />-->
+        <!--        <attr name="speedUnit" format="string" />-->
+    </declare-styleable>
+
+    <declare-styleable name="GofaSafeAreaView">
+        <attr name="safeAreaType">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="left" value="2" />
+            <enum name="right" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="GofaCell">
+        <attr name="title" />
+        <attr name="subtitle" />
+        <attr name="icon" />
+        <attr name="value" />
+        <attr name="arrowIcon" />
+        <attr name="isActiveInCell" />
+        <attr name="arrowIconDrawable" format="reference" />
+        <attr name="borderType" />
+    </declare-styleable>
+
+    <declare-styleable name="GofaCellSwitch">
+        <attr name="title" />
+        <attr name="subtitle" />
+        <attr name="icon" />
+        <attr name="switchEnable" format="boolean" />
+        <attr name="borderType" />
+        <attr name="isSwitchColorIcon" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GofaItemMoveHistoryButton">
+        <attr name="title" />
+        <attr name="itemType" format="enum">
+            <enum name="distance" value="0" />
+            <enum name="duration" value="1" />
+            <enum name="speed" value="2" />
+            <enum name="overSpeed" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="GofaTrafficOverlay">
+
+    </declare-styleable>
+</resources>

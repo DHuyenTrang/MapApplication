@@ -31,9 +31,9 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnSignin.setOnClickListener {
-            val phoneNumber = binding.edtEmail.text.toString()
-            val password = binding.edtPassword.text.toString()
+        binding.btnSignIn.setOnClickListener {
+            val phoneNumber = binding.etPhoneNumber.text.toString()
+            val password = binding.etCurrentPassword.text.toString()
 
             if (phoneNumber.isEmpty() || password.isEmpty()) {
                 Toast.makeText(requireContext(), "Please enter all fields", Toast.LENGTH_SHORT).show()

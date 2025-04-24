@@ -7,14 +7,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentRouteBinding
+import com.example.mapapplication.utils.extension.drawMarker
+import com.example.mapapplication.utils.extension.drawRoute
+import com.example.mapapplication.utils.extension.toDistance
+import com.example.mapapplication.utils.extension.toDuration
 import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
+import vn.map4d.map.annotations.MFDirectionsRenderer
+import vn.map4d.map.annotations.MFDirectionsRendererOptions
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
@@ -40,7 +47,7 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
     private var destinationMarker: MFMarker? = null
-    private var currentPolyline: MFPolyline? = null
+    private var currentDirection : MFDirectionsRenderer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,53 +69,64 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
             findNavController().popBackStack()
         }
         binding.btnStartNavigation.setOnClickListener {
-            findNavController().navigate(R.id.action_routeFragment_to_navigationFragment)
+            findNavController().navigate(
+                R.id.action_routeFragment_to_navigationFragment,
+                args = bundleOf(
+                    "destinationLat" to destinationLat,
+                    "destinationLng" to destinationLng,
+                )
+            )
         }
 
         currentLat = arguments?.getDouble("currentLat")
         currentLng = arguments?.getDouble("currentLng")
         destinationLat = arguments?.getDouble("destinationLat")
         destinationLng = arguments?.getDouble("destinationLng")
-        routeViewModel.searchRoute(180, destinationLat!!, destinationLng!!, currentLat!!, currentLng!!)
-        Log.d("RouteFragment", "currentLat: $currentLat, currentLng: $currentLng, destinationLat: $destinationLat, destinationLng: $destinationLng")
+        routeViewModel.searchRoute(
+            180,
+            destinationLat!!,
+            destinationLng!!,
+            currentLat!!,
+            currentLng!!
+        )
+
+        binding.tvDestination.text = arguments?.getString("nameLocation")
+
     }
 
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.coordinates.collect { coordinates ->
-                getRouteToDraw(coordinates)
+                if (coordinates.isNotEmpty()) {
+                    currentDirection?.remove()
+                    val path = coordinates.toList()
+                    val paths: List<List<MFLocationCoordinate>> = arrayListOf(path)
+
+                    val options = MFDirectionsRendererOptions()
+                        .paths(paths)
+                        .activeStrokeColor(Color.parseColor("#FF629BF8"))
+                        .inactiveStrokeColor(Color.parseColor("#FF183668"))
+                        .activeOutlineColor(Color.parseColor("#FF183668"))
+                        .width(10.0f)
+                        .outlineWidth(2f)
+                        .startIcon(null)
+                        .endIcon(null)
+                    currentDirection = map4D.addDirectionsRenderer(options)
+
+                    val builder = MFCoordinateBounds.Builder()
+                    coordinates.forEach { builder.include(it) }
+                    val bounds = builder.build()
+                    map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 0, 0, 0, 250))
+                }
             }
         }
-    }
-
-    private fun getRouteToDraw(coordinates: List<MFLocationCoordinate>) {
-        if (coordinates.isNotEmpty()) {
-            currentPolyline?.remove()
-            currentPolyline = map4D.addPolyline(
-                MFPolylineOptions().add(*coordinates.toTypedArray())
-                    .color(Color.BLUE)
-                    .width(6.0f)
-                    .zIndex(10f)
-            )
-            val builder = MFCoordinateBounds.Builder()
-            coordinates.forEach { builder.include(it) }
-            val bounds = builder.build()
-            map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 100))
-        }
-    }
-
-    private fun drawMarker(marker: MFMarker?, lat: Double, lon: Double, source: Int) {
-        marker?.remove()
-        val newMarker = map4D.addMarker(
-            MFMarkerOptions()
-                .position(MFLocationCoordinate(lat, lon))
-                .icon(MFBitmapDescriptorFactory.fromResource(source))
-        )
-
-        // Gán lại marker tương ứng
-        when (source) {
-            R.drawable.ic_location -> currentLocationMarker = newMarker
-            R.drawable.ic_marker_destination -> destinationMarker = newMarker
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.pathInfor.collect { pathInfor ->
+                pathInfor?.let {
+                    binding.tvDistance.text = it.distance.toDistance()
+                    binding.tvDuration.text = it.duration.toDuration()
+                }
+            }
         }
     }
 
@@ -121,9 +139,17 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
         if (p0 != null) {
             map4D = p0
             map4D.mapType = MFMapType.ROADMAP
-            drawMarker(currentLocationMarker, currentLat!!, currentLng!!, R.drawable.ic_location)
-            drawMarker(destinationMarker, destinationLat!!, destinationLng!!,
-                R.drawable.ic_marker_destination
+            currentLocationMarker = map4D.drawMarker(
+                currentLocationMarker,
+                currentLat!!,
+                currentLng!!,
+                R.drawable.ic_location
+            )
+            destinationMarker = map4D.drawMarker(
+                destinationMarker,
+                destinationLat!!,
+                destinationLng!!,
+                R.drawable.ic_pin_marker
             )
             observe()
         }

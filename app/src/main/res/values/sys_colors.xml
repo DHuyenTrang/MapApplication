@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blackSystem">#FF000000</color>
+    <color name="whiteSystem">#FFFFFFFF</color>
+
+    <color name="primary95">#FFE5F3EE</color>
+    <color name="primary90">#FFCCE8DC</color>
+    <color name="primary85">#FFB2DCCB</color>
+    <color name="primary80">#FF99D1BA</color>
+    <color name="primary70">#FF66B997</color>
+    <color name="primary60">#FF33A275</color>
+    <color name="primary50">#FF008B52</color>
+    <color name="primary40">#FF006F42</color>
+    <color name="primary30">#FF005331</color>
+    <color name="primary20">#FF003821</color>
+    <color name="primary15">#FF002A19</color>
+    <color name="primary10">#FF001C10</color>
+    <color name="primary5">#FF000E08</color>
+    <color name="primary12">#2A006F42</color>
+    <color name="neutral98">#FFF8FAFA</color>
+    <color name="neutral95">#FFEFF1F1</color>
+    <color name="neutral94">#FFECEEEF</color>
+    <color name="neutral90">#FFE1E3E3</color>
+    <color name="neutral87">#FFD8DADB</color>
+    <color name="neutral85">#FFE6E8E9</color>
+    <color name="neutral80">#FFC4C7C7</color>
+    <color name="neutral70">#FFA9ACAC</color>
+    <color name="neutral60">#FF8E9192</color>
+    <color name="neutral50">#FF747878</color>
+    <color name="neutral40">#FF5C5F5F</color>
+    <color name="neutral30">#FF444748</color>
+    <color name="neutral20">#FF2E3132</color>
+    <color name="neutral17">#FF272B2B</color>
+    <color name="neutral15">#FF272B2B</color>
+    <color name="neutral12">#FF1D2021</color>
+    <color name="neutral10">#FF191C1D</color>
+    <color name="neutral6">#FF101415</color>
+    <color name="neutral5">#FF0E1212</color>
+
+    <color name="success95">#FFDCF7EE</color>
+    <color name="success90">#FFC6F0E2</color>
+    <color name="success85">#FFAFE9D6</color>
+    <color name="success80">#FF98E2CA</color>
+    <color name="success70">#FF6BD5B1</color>
+    <color name="success60">#FF3DC799</color>
+    <color name="success50">#FF10B981</color>
+    <color name="success40">#FF0D9467</color>
+    <color name="success30">#FF0A6F4D</color>
+    <color name="success20">#FF064A34</color>
+    <color name="success15">#FF053827</color>
+    <color name="success10">#FF03251A</color>
+    <color name="success5">#FF02130D</color>
+
+    <color name="warning95">#FFFEF5E7</color>
+    <color name="warning90">#FFFDECCE</color>
+    <color name="warning85">#FFFCE2B6</color>
+    <color name="warning80">#FFFBD89D</color>
+    <color name="warning70">#FFF9C56D</color>
+    <color name="warning60">#FFF7B13C</color>
+    <color name="warning50">#FFF59E0B</color>
+    <color name="warning40">#FFC47E09</color>
+    <color name="warning30">#FF935F07</color>
+    <color name="warning20">#FF623F04</color>
+    <color name="warning15">#FF4A2F03</color>
+    <color name="warning10">#FF312002</color>
+    <color name="warning5">#FF191001</color>
+
+    <color name="error95">#FFFEECEF</color>
+    <color name="error90">#FFFDD9DF</color>
+    <color name="error85">#FFFCC5CF</color>
+    <color name="error80">#FFFBB2BF</color>
+    <color name="error70">#FFF88C9E</color>
+    <color name="error60">#FFF6657E</color>
+    <color name="error50">#FFE2293C</color>
+    <color name="error40">#FFC5334C</color>
+    <color name="error30">#FFA22F3C</color>
+    <color name="error20">#FF623F04</color>
+    <color name="error15">#FF4A2F03</color>
+    <color name="error10">#FF312002</color>
+
+    <color name="info95">#FFEBF2FE</color>
+    <color name="info90">#FFD7E5FD</color>
+    <color name="info85">#FFC4D9FC</color>
+    <color name="info80">#FFB1CDFB</color>
+    <color name="info70">#FF89B4FA</color>
+    <color name="info60">#FF629BF8</color>
+    <color name="info50">#FF3B82F6</color>
+    <color name="info40">#FF2F69C7</color>
+    <color name="info30">#FF235097</color>
+    <color name="info20">#FF183668</color>
+    <color name="info15">#FF122A50</color>
+    <color name="info10">#FF0C1D38</color>
+    <color name="info5">#FF061121</color>
+
+    <color name="trans">#00061121</color>
+    <color name="transparent_red">#808080</color>
+</resources>

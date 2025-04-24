@@ -74,4 +74,10 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0") // Gson Converter
     implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2") // Logging
+
+    // render glts - glb
+    implementation ("com.google.android.filament:filament-android:1.57.1")
+    implementation ("com.google.android.filament:gltfio-android:1.57.1")
+    // Optional: Add filament-utils-android if needed for additional utilities
+    implementation ("com.google.android.filament:filament-utils-android:1.57.1")
 }

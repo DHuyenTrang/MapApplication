@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/bottom_sheet_padding_vertical"
+    app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_coordinator_layout">
+
+        <View
+            android:id="@+id/drag_view"
+            android:layout_width="40dp"
+            android:layout_height="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_drag_handle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ic_navigation"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_turn_left"
+            app:layout_constraintBottom_toBottomOf="@id/tv_name_location"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_distance_step_remaining"
+            app:layout_constraintWidth_percent="0.17" />
+
+        <TextView
+            android:id="@+id/tv_distance_step_remaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="@dimen/margin_coordinator_layout"
+            android:text="800m"
+            android:textAppearance="@style/Gofa.TextLg.Bold"
+            app:layout_constraintStart_toEndOf="@id/ic_navigation"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_name_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đường Trần Phú"
+            android:textAppearance="@style/Gofa.Text2XL.Bold"
+            android:textColor="@color/primary"
+            app:layout_constraintStart_toStartOf="@id/tv_distance_step_remaining"
+            app:layout_constraintTop_toBottomOf="@id/tv_distance_step_remaining" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_drag_handle"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_location" />
+
+        <TextView
+            android:id="@+id/tv_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_coordinator_layout"
+            android:text="14:00"
+            android:textAppearance="@style/Gofa.Text3XL.Bold"
+            android:textColor="@color/primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_name_location" />
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 phút"
+            android:textAppearance="@style/Gofa.TextXL.Bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_current_time" />
+
+        <TextView
+            android:id="@+id/tv_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:drawableStart="@drawable/ic_circle"
+            android:drawablePadding="15dp"
+            android:drawableTint="@color/outlineVariant"
+            android:text="6 km"
+            android:textAppearance="@style/Gofa.TextXL.Bold"
+            app:layout_constraintStart_toEndOf="@id/tv_duration"
+            app:layout_constraintTop_toTopOf="@id/tv_duration" />
+
+        <com.example.mapapplication.widgets.CircleIconButton
+            android:id="@+id/btn_sound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_sound"
+            app:isActive="true"
+            app:layout_constraintBottom_toBottomOf="@id/tv_duration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_current_time" />
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_close"
+            style="@style/Gofa.IconButton.Error"
+            app:iconTint="@color/white"
+            android:backgroundTint="@color/error"
+            app:layout_constraintBottom_toBottomOf="@id/tv_duration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_current_time" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--    </androidx.core.widget.NestedScrollView>-->
+</LinearLayout>

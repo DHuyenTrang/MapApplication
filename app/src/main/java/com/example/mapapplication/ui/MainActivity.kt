@@ -1,6 +1,5 @@
 package com.example.mapapplication.ui
 
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -10,10 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mapapplication.databinding.ActivityMainBinding
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.mapapplication.R
-import com.example.mapapplication.TokenManager
-import com.example.mapapplication.Utils.moveCameraToLocation
+import com.example.mapapplication.manager.TokenManager
+import com.example.mapapplication.utils.extension.toKmPerHour
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,9 +22,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import vn.map4d.types.MFLocationCoordinate
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,10 +34,12 @@ class MainActivity : AppCompatActivity() {
     private val currentLocationViewModel: CurrentLocationViewModel by viewModel()
     private val routeViewModel: RouteViewModel by viewModel()
 
+    private var previousLocation: Location? = null
+    private var currentLocation: Location? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient // API Google Play Services giup dinh vi
     private val locationRequest = LocationRequest.Builder(
         Priority.PRIORITY_HIGH_ACCURACY, // priority
-        3000L // interval in milliseconds
+        1000L // interval in milliseconds
     ).apply {
         setMinUpdateIntervalMillis(1000L) // fastest interval
     }.build()
@@ -50,11 +53,17 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val controller = navHostFragment.navController
 
-//        if (checkCurrentUser()) {
-//            controller.navigate(R.id.mapFragment)
-//        } else {
-//            controller.navigate(R.id.signInFragment)
-//        }
+        if (checkCurrentUser()) {
+            controller.navigate(R.id.mapFragment)
+        } else {
+            controller.navigate(R.id.signInFragment)
+        }
+        // observe logout event
+        lifecycleScope.launch {
+            tokenManager.logoutFlow.collectLatest {
+                controller.navigate(R.id.signInFragment)
+            }
+        }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         requestLocationPermission()
@@ -63,14 +72,27 @@ class MainActivity : AppCompatActivity() {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            val location = result.lastLocation ?: return
-            Log.d("LOCATION", "Location: ${location.latitude}, ${location.longitude}")
-            updateCurrentLocationOnMap(location)
+            currentLocation = result.lastLocation ?: return
+//            Log.d("LOCATION", "Location: ${location.latitude}, ${location.longitude}")
+            if (previousLocation == null) {
+                previousLocation = currentLocation
+                updateCurrentLocationOnMap(currentLocation!!)
+            }
+            else {
+                if(currentLocation!!.distanceTo(previousLocation!!) < 5) {
+                    return
+                }
+                else {
+                    previousLocation = currentLocation
+                    updateCurrentLocationOnMap(currentLocation!!)
+                }
+            }
         }
     }
 
     private fun updateCurrentLocationOnMap(location: Location) {
         currentLocationViewModel.setCurrentLocation(location)
+        currentLocationViewModel.setCurrentSpeed(location.speed.toKmPerHour())
     }
 
     private fun requestLocationPermission() {

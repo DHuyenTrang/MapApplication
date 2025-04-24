@@ -4,10 +4,12 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapapplication.R
-import com.example.mapapplication.TokenManager
+import com.example.mapapplication.manager.TokenManager
 import com.example.mapapplication.data.response.Step
+import com.example.mapapplication.model.PathInfor
 import com.example.mapapplication.repository.RouteRepository
+import com.example.mapapplication.utils.Constant
+import com.example.mapapplication.utils.Utils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,40 +23,41 @@ class RouteViewModel(
     private val _coordinates = MutableStateFlow<List<MFLocationCoordinate>>(emptyList())
     val coordinates: StateFlow<List<MFLocationCoordinate>> = _coordinates.asStateFlow()
 
-    private var _isLoading = MutableStateFlow<Boolean?>(null)
+    private val _isLoading = MutableStateFlow<Boolean?>(null)
     val isLoading: StateFlow<Boolean?> = _isLoading.asStateFlow()
 
-    private var _steps = MutableStateFlow<List<Step>?>(null)
+    private val _steps = MutableStateFlow<List<Step>?>(null)
     val steps: StateFlow<List<Step>?> = _steps.asStateFlow()
 
-    private var _navigationStepIndex = MutableStateFlow<Int>(0)
+    private val _navigationStepIndex = MutableStateFlow<Int>(0)
     val navigationStepIndex: StateFlow<Int> = _navigationStepIndex.asStateFlow()
 
-    private var _distanceRemaining = MutableStateFlow<Double?>(null)
+    private val _distanceRemaining = MutableStateFlow<Double?>(null)
     val distanceRemaining: StateFlow<Double?> = _distanceRemaining.asStateFlow()
+
+    private val _pathInfor = MutableStateFlow<PathInfor?>(null)
+    val pathInfor: StateFlow<PathInfor?> = _pathInfor.asStateFlow()
+
+    private val _locationStep = MutableStateFlow<String?>(null)
+    val locationStep: StateFlow<String?> = _locationStep.asStateFlow()
+
+    private val _typeSign = MutableStateFlow<Int?>(null)
+    val typeSign: StateFlow<Int?> = _typeSign.asStateFlow()
+
+    private val _isDeviated = MutableStateFlow<Boolean>(false)
+    val isDeviated: StateFlow<Boolean> = _isDeviated.asStateFlow()
 
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
-
-//    fun getIconForManeuver(maneuverType: String): Int {
-//        return when (maneuverType) {
-//            "turn-left" -> R.drawable.ic_turn_left
-//            "right" -> R.drawable.ic_turn_right_
-//            "straight" -> R.drawable.ic_straight
-//            "uturn" ->
-//            else -> R.drawable.ic_navigation
-//        }
-//    }
     fun calculateDistanceRemaining(location: Location) {
         val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)
-        val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
+        currentStep?.maneuver?.instruction?.let { getTypeSign(it) }
 
-        Log.d("RouteViewModel", "Navigation step index: ${_navigationStepIndex.value}")
-        Log.d("RouteViewModel", "Next point: ${nextPoint?.latitude} ${nextPoint?.longitude}")
+        val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
-        Log.d("RouteViewModel", "Distance: $distance")
+        Log.d("RouteViewModel", "Step: ${_navigationStepIndex.value}, Distance remaining: $distance")
 
         _distanceRemaining.value = distance
         if (distance <= 10) {
@@ -63,39 +66,81 @@ class RouteViewModel(
     }
 
     private fun updateNavigationStepIndex() {
-            if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
-                _navigationStepIndex.value++
+        if (_navigationStepIndex.value < (_steps.value?.size ?: 0) - 1) {
+            _navigationStepIndex.value++
+            Log.d("RouteViewModel", "Advanced to step ${_navigationStepIndex.value}")
+        }
+    }
+
+    fun checkRouteDeviation(location: Location) {
+        if (location.accuracy > 20) {
+            Log.d("Route", "Low GPS accuracy: ${location.accuracy} meters, ignoring update")
+            return
+        }
+        val stepCoordinates = getCoordinatesFromStep(steps.value)
+
+        val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
+        val result = Utils.calculateDistanceToRoad(currentLocation, stepCoordinates)
+        Log.d("Route", "Distance to road: $result")
+
+        if (result != null) {
+            if (result >= 50.0) {
+                Log.d("Route", "User deviated from the route")
+                _isDeviated.value = true
             }
+        }
     }
 
     fun searchRoute(bearings: Int, dstLat: Double, dstLng: Double, srcLat: Double, srcLng: Double) {
         if (_isLoading.value == true) return
-        Log.d("RouteViewModel", "in searchRoute")
+        Log.d("Route", "in searchRoute")
         _isLoading.value = true
         Log.d("Route", "Is loading: ${_isLoading.value}")
         viewModelScope.launch {
             val response = routeRepository.searchRoute(bearings, dstLat, dstLng, srcLat, srcLng)
             if (response.isSuccessful) {
+                _isDeviated.value = false
                 // first route
                 response.body()?.let {
-                    val steps = it.routes
-                        .firstOrNull()
-                        ?.legs?.firstOrNull()
-                        ?.steps
+
                     // emit coordinates to draw route
+                    val steps = it.routes.firstOrNull()?.legs?.firstOrNull()?.steps
                     _coordinates.value = getCoordinatesFromStep(steps)
 
                     // emit steps to route turn by turn
                     _steps.value = steps
                     for (step in steps ?: emptyList()) {
-                        Log.d("RouteViewModel", "Step: ${step.maneuver.location}")
+                        Log.d("Route", "Step: ${step.maneuver.instruction}")
                     }
+
+                    // emit location, duration
+                    _pathInfor.value = it.routes.firstOrNull()?.mapToPathInfo()
                 }
                 _isLoading.value = false
                 Log.d("Route", "Is loading: ${_isLoading.value}")
             } else {
-                Log.e("RouteViewModel", "searchRoute failed: ${response.errorBody()?.string()}")
+                Log.e("Route", "searchRoute failed: ${response.errorBody()?.string()}")
 
+            }
+        }
+    }
+
+    private fun getTypeSign(instruction: String) {
+        if (instruction.contains("U-turn")) {
+            if (instruction.contains("left")) {
+                _typeSign.value = Constant.TYPE_SIGN_U_LEFT
+            } else {
+                _typeSign.value = Constant.TYPE_SIGN_U_RIGHT
+            }
+        }
+        else {
+            if (instruction.contains("left")) {
+                _typeSign.value = Constant.TYPE_SIGN_LEFT
+            } else if (instruction.contains("right")) {
+                _typeSign.value = Constant.TYPE_SIGN_RIGHT
+            }
+            else {
+                _typeSign.value = null
             }
         }
     }
