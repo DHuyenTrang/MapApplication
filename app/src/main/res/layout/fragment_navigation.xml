@@ -10,7 +10,9 @@
     <vn.map4d.map.core.MFMapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        map:mapId="6808c0ec5d65bdb7b81fdedc"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/layout_bottom_sheet"

@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.mapapplication.R
 import com.example.mapapplication.manager.TokenManager
+import com.example.mapapplication.utils.extension.toKmPerHour
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -91,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateCurrentLocationOnMap(location: Location) {
         currentLocationViewModel.setCurrentLocation(location)
+        currentLocationViewModel.setCurrentSpeed(location.speed.toKmPerHour())
     }
 
     private fun requestLocationPermission() {

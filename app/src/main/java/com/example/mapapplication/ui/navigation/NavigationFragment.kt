@@ -4,25 +4,34 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.databinding.FragmentNavigationBinding
 import com.example.mapapplication.ui.map.MapRendererDelegate
+import com.example.mapapplication.utils.Utils.moveCameraToLocation
 import com.example.mapapplication.utils.extension.animateCameraSmoothlyTo
 import com.example.mapapplication.utils.extension.animateToPosition
 import com.example.mapapplication.utils.extension.drawRoute
+import com.example.mapapplication.utils.extension.mToKm
 import com.example.mapapplication.utils.extension.toDistance
 import com.example.mapapplication.utils.extension.toDuration
+import com.example.mapapplication.utils.extension.toKmPerHour
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.DirectionsRendererDelegate
@@ -43,7 +52,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.util.Date
 
-class NavigationFragment : Fragment(), OnMapReadyCallback{
+class NavigationFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map4D: Map4D
 
     private var _binding: FragmentNavigationBinding? = null
@@ -55,7 +64,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback{
     private var destinationLat: Double? = null
     private var destinationLng: Double? = null
 
-    private var currentDirection : MFDirectionsRenderer? = null
+    private var currentDirection: MFDirectionsRenderer? = null
     private var destinationMarker: MFMarker? = null
     private var currentLocationMarker: MFMarker? = null
     private var lastCameraPosition: MFLocationCoordinate? = null
@@ -126,6 +135,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback{
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.isDeviated.collectLatest { isDeviated ->
                 if (isDeviated) {
+                    Log.d("NavigationFragment", "isDeviated: $isDeviated")
                     routeViewModel.searchRoute(
                         currentLocationViewModel.currentLocation.value!!.bearing.toInt(),
                         destinationLat!!,
@@ -138,26 +148,59 @@ class NavigationFragment : Fragment(), OnMapReadyCallback{
             }
         }
     }
-
+    @OptIn(FlowPreview::class)
     private fun routing() {
         viewLifecycleOwner.lifecycleScope.launch {
-            currentLocationViewModel.currentLocation.collectLatest { location ->
-                if (location != null) {
-                    if (currentLocationMarker == null) addMarkerToMap(location)
-                    val current = MFLocationCoordinate(location.latitude, location.longitude)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                currentLocationViewModel.currentLocation
+                    .combine(routeViewModel.distanceRemaining) { location, distance ->
+                        Pair(location, distance)
+                    }
+                    .debounce(500)
+                    .collectLatest { (location, distance) ->
+                        if (location != null) {
+                            if (currentLocationMarker == null) {
+                                addMarkerToMap(location)
+                            }
 
-                    val from = lastCameraPosition ?: current
-                    map4D.animateCameraSmoothlyTo(from, current, location.bearing.toDouble())
-                    lastCameraPosition = current
+                            // Convert location to map coordinates
+                            val current = MFLocationCoordinate(location.latitude, location.longitude)
+                            val speed = location.speed.toKmPerHour()
+                            val distanceRemaining = distance ?: 0.0
+                            val from = lastCameraPosition ?: current
 
-                    currentLocationMarker?.animateToPosition(location)
-                    routeViewModel.calculateDistanceRemaining(location)
-                    routeViewModel.checkRouteDeviation(location)
-                }
+                            val (zoom, tilt) = when {
+                                speed <= 60 -> when {
+                                    distanceRemaining > 1000.0 -> 16.5 to 60.0
+                                    distanceRemaining < 300.0 -> 14.5 to 0.0
+                                    else -> 17.0 to 60.0
+                                }
+                                else -> when {
+                                    distanceRemaining > 2000.0 -> 16.0 to 60.0
+                                    distanceRemaining < 300.0 -> 14.5 to 0.0
+                                    else -> 17.0 to 60.0
+                                }
+                            }
+
+                            map4D.animateCameraSmoothlyTo(
+                                from,
+                                current,
+                                location.bearing.toDouble(),
+                                zoom,
+                                tilt
+                            )
+
+                            lastCameraPosition = current
+                            currentLocationMarker?.animateToPosition(location)
+
+                            // Update route calculations
+                            routeViewModel.calculateDistanceRemaining(location)
+                            routeViewModel.checkRouteDeviation(location)
+                        }
+                    }
             }
         }
     }
-
     private fun addMarkerToMap(location: Location) {
         currentLocationMarker?.remove()
 
@@ -165,7 +208,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback{
             MFMarkerOptions()
                 .position(MFLocationCoordinate(location.latitude, location.longitude))
                 .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location))
-                .zIndex(15f)
+                .zIndex(13f)
         )
     }
 
@@ -182,8 +225,10 @@ class NavigationFragment : Fragment(), OnMapReadyCallback{
                         .activeStrokeColor(Color.parseColor("#FF629BF8"))
                         .inactiveStrokeColor(Color.parseColor("#FF183668"))
                         .activeOutlineColor(Color.parseColor("#FF183668"))
-                        .width(10.0f)
-                        .outlineWidth(2f)
+                        .width(15.0f)
+                        .outlineWidth(3f)
+                        .startIcon(null)
+                        .endIcon(null)
                     currentDirection = map4D.addDirectionsRenderer(options)
                 }
             }

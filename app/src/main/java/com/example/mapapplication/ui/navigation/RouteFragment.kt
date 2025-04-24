@@ -20,6 +20,8 @@ import com.example.mapapplication.viewmodel.RouteViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
+import vn.map4d.map.annotations.MFDirectionsRenderer
+import vn.map4d.map.annotations.MFDirectionsRendererOptions
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.annotations.MFPolyline
@@ -45,7 +47,7 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
     private var destinationMarker: MFMarker? = null
-    private var currentPolyline: MFPolyline? = null
+    private var currentDirection : MFDirectionsRenderer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,7 +97,27 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.coordinates.collect { coordinates ->
-                setUpPath(coordinates)
+                if (coordinates.isNotEmpty()) {
+                    currentDirection?.remove()
+                    val path = coordinates.toList()
+                    val paths: List<List<MFLocationCoordinate>> = arrayListOf(path)
+
+                    val options = MFDirectionsRendererOptions()
+                        .paths(paths)
+                        .activeStrokeColor(Color.parseColor("#FF629BF8"))
+                        .inactiveStrokeColor(Color.parseColor("#FF183668"))
+                        .activeOutlineColor(Color.parseColor("#FF183668"))
+                        .width(10.0f)
+                        .outlineWidth(2f)
+                        .startIcon(null)
+                        .endIcon(null)
+                    currentDirection = map4D.addDirectionsRenderer(options)
+
+                    val builder = MFCoordinateBounds.Builder()
+                    coordinates.forEach { builder.include(it) }
+                    val bounds = builder.build()
+                    map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 0, 0, 0, 250))
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -105,16 +127,6 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
                     binding.tvDuration.text = it.duration.toDuration()
                 }
             }
-        }
-    }
-
-    private fun setUpPath(coordinates: List<MFLocationCoordinate>) {
-        if (coordinates.isNotEmpty()) {
-            currentPolyline = map4D.drawRoute(currentPolyline, coordinates)
-            val builder = MFCoordinateBounds.Builder()
-            coordinates.forEach { builder.include(it) }
-            val bounds = builder.build()
-            map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 0, 0, 0, 300))
         }
     }
 

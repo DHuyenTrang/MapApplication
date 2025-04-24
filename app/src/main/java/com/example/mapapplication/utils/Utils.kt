@@ -1,13 +1,106 @@
 package com.example.mapapplication.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.SurfaceTexture
+import android.os.Build
 import android.util.Log
+import android.view.Surface
+import androidx.annotation.RequiresApi
+import com.google.android.filament.Camera
+import com.google.android.filament.Engine
+import com.google.android.filament.EntityManager
+import com.google.android.filament.View
+import com.google.android.filament.Viewport
+import com.google.android.filament.gltfio.AssetLoader
+import com.google.android.filament.gltfio.ResourceLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import vn.map4d.map.camera.MFCameraPosition
 import vn.map4d.map.camera.MFCameraUpdateFactory
+import com.google.android.filament.gltfio.UbershaderProvider
 import vn.map4d.map.core.Map4D
 import vn.map4d.types.MFLocationCoordinate
+import java.net.URL
+import java.nio.Buffer
 import kotlin.math.min
 
 object Utils {
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun renderGLTFToBitMap(
+        url: String,
+        width: Int,
+        height: Int
+        ): Bitmap? = withContext(Dispatchers.IO) {
+        // init filament
+        val engine = Engine.create()
+        val scene = engine.createScene()
+        val view = engine.createView()
+        val renderer = engine.createRenderer()
+
+        val materialProvider = UbershaderProvider(engine)
+        val assetLoader = AssetLoader(engine, materialProvider, EntityManager.get())
+
+        val gltfData = URL(url).readBytes()
+        val resourceLoader = ResourceLoader(engine)
+
+        val asset = assetLoader.createAsset(gltfData.toBuffer()) ?: return@withContext null
+        val resourceUris = asset.resourceUris ?: emptyArray()
+        for (uri in resourceUris) {
+            try {
+                val resourceUrl = if (uri.startsWith("http")) uri else URL(URL(url).protocol, URL(url).host, uri).toString()
+                val resourceData = URL(resourceUrl).readBytes()
+                resourceLoader.addResourceData(uri, resourceData.toBuffer())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        resourceLoader.loadResources(asset)
+        scene.addEntities(asset.entities)
+
+        // Configure view with camera
+        view.scene = scene
+        view.viewport = Viewport(0, 0, width, height)
+        val camera = engine.createCamera(EntityManager.get().create())
+        view.camera = camera
+        camera.setProjection(45.0, width.toDouble() / height, 0.1, 10.0, Camera.Fov.VERTICAL)
+        camera.lookAt(1.0, 1.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0) // Adjusted for visibility
+
+        val surfaceTexture = SurfaceTexture(false)
+        surfaceTexture.setDefaultBufferSize(width, height)
+        val surface = Surface(surfaceTexture)
+        val swapChain = engine.createSwapChain(surface)
+
+        // Render the scene
+        if (renderer.beginFrame(swapChain, 0)) {
+            renderer.render(view)
+            renderer.endFrame()
+        }
+
+        // Capture the rendered frame to a Bitmap
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        surfaceTexture.updateTexImage()
+
+        // Clean up
+        resourceLoader.destroy()
+        assetLoader.destroyAsset(asset)
+        materialProvider.destroyMaterials()
+        engine.destroyRenderer(renderer)
+        engine.destroyView(view)
+        engine.destroyScene(scene)
+        engine.destroy()
+        materialProvider.destroy()
+
+        bitmap
+    }
+
+    private fun ByteArray.toBuffer(): Buffer {
+        return java.nio.ByteBuffer.allocateDirect(size).apply {
+            put(this@toBuffer)
+            flip()
+        }
+    }
 
     fun calculateDistanceToRoad(
         currentLocation: MFLocationCoordinate,
@@ -76,12 +169,13 @@ object Utils {
         return result
     }
 
-    fun moveCameraToLocation(map4d: Map4D, lat: Double, lon: Double, bearing: Double) {
+    fun moveCameraToLocation(map4d: Map4D, lat: Double, lon: Double, zoom: Double, tilt: Double, bearing: Float) {
 
         val cameraPosition = MFCameraPosition.Builder()
             .target(MFLocationCoordinate(lat, lon))
-            .bearing(bearing)
-            .zoom(15.0)
+            .bearing(bearing.toDouble())
+            .zoom(zoom)
+            .tilt(tilt)
             .build()
 
         map4d.animateCamera(

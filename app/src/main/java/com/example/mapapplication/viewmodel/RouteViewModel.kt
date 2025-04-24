@@ -57,7 +57,7 @@ class RouteViewModel(
 
         val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
-//        Log.d("RouteViewModel", "Distance: $distance")
+        Log.d("RouteViewModel", "Distance: $distance")
 
         _distanceRemaining.value = distance
         if (distance <= 10) {

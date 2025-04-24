@@ -9,7 +9,9 @@
     <vn.map4d.map.core.MFMapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        map:mapId="6808c0ec5d65bdb7b81fdedc"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
@@ -25,7 +27,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/background"
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent">

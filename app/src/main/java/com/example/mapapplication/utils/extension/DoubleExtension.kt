@@ -19,3 +19,11 @@ fun Double.toDistance(): String {
     val distance = String.format("%.1f km", kilometers)
     return distance
 }
+
+fun Double.mToKm(): Double {
+    return this / 1000
+}
+
+fun Float.toKmPerHour(): Int {
+    return (this * 3.6).toInt()
+}

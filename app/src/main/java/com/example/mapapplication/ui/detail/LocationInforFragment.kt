@@ -100,7 +100,7 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
                 if (it != null) {
                     destinationLat = it.lat
                     destinationLng = it.lng
-                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 0.0)
+                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 14.5, 0.0, 0f)
                     destinationMarker = map4D.drawMarker(
                         destinationMarker,
                         it.lat,

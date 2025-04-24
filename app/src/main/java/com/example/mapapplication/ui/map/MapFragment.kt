@@ -1,5 +1,6 @@
 package com.example.mapapplication.ui.map
 
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -13,13 +14,16 @@ import androidx.navigation.fragment.findNavController
 import com.example.mapapplication.R
 import com.example.mapapplication.utils.Utils.moveCameraToLocation
 import com.example.mapapplication.databinding.FragmentMapBinding
+import com.example.mapapplication.utils.extension.animateToPosition
 import com.example.mapapplication.utils.extension.drawMarker
+import com.example.mapapplication.utils.extension.toKmPerHour
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.MFBitmapDescriptorFactory
+import vn.map4d.map.annotations.MFBuildingOptions
 import vn.map4d.map.annotations.MFMarker
 import vn.map4d.map.annotations.MFMarkerOptions
 import vn.map4d.map.core.MFMapType
@@ -35,6 +39,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
+    private var gofaBitmap : Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,10 +81,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewLifecycleOwner.lifecycleScope.launch {
             currentLocationViewModel.currentLocation.collectLatest {location ->
                 if (location != null) {
-                    currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
-                    moveCameraToLocation(map4D, location.latitude, location.longitude, 0.0)
+                    if (currentLocationMarker == null) currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
+                    currentLocationMarker?.animateToPosition(location)
+
+                    val currentSpeed = location.speed.toKmPerHour()
+                    binding.txtCurrentSpeed.text = currentSpeed.toString()
+                    if(currentSpeed > 10){
+                        moveCameraToLocation(map4D, location.latitude, location.longitude, 17.0, 60.0, location.bearing)
+                    }
+                    else {
+//                        moveCameraToLocation(map4D, location.latitude, location.longitude, 14.5, 0.0, location.bearing)
+                        moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 14.5, 0.0, 0f)
+                    }
+
                 } else {
-                    moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 0.0)
+                    moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 14.5, 0.0, 0f)
                 }
             }
         }
@@ -88,8 +104,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.ROADMAP
+            map4D.mapType = MFMapType.MAP3D
+            map4D.setTiltGesturesEnabled(true)
             setUpCurrentLocation()
+
+            val buildingOptions = MFBuildingOptions()
+            buildingOptions.location(MFLocationCoordinate(20.98085354867591, 105.78798040202281))
+                .name("Test Building")
+                .model("https://ucarecdn.com/2201007e-6f2e-47b4-8ff0-a4e413741139/Lowpoly_tree_sample.obj")
+
+            map4D.addBuilding(buildingOptions)
         }
 
     }

@@ -1,6 +1,7 @@
 package com.example.mapapplication.utils.extension
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Looper
 import com.example.mapapplication.R
@@ -21,6 +22,18 @@ fun Map4D.drawMarker(oldMarker: MFMarker?, lat: Double, lon: Double, source: Int
         MFMarkerOptions()
             .position(MFLocationCoordinate(lat, lon))
             .icon(MFBitmapDescriptorFactory.fromResource(source))
+    )
+    return newMarker
+}
+
+fun Map4D.drawMarker2(oldMarker: MFMarker?, lat: Double, lon: Double, bitmap: Bitmap?): MFMarker {
+    oldMarker?.remove()
+    val descriptor = bitmap?.let { MFBitmapDescriptorFactory.fromBitmap(it) }
+        ?: MFBitmapDescriptorFactory.fromResource(R.drawable.ic_location) // Fallback
+    val newMarker = this.addMarker(
+        MFMarkerOptions()
+            .position(MFLocationCoordinate(lat, lon))
+            .icon(descriptor)
     )
     return newMarker
 }
@@ -62,33 +75,46 @@ fun Map4D.drawRoute(currentPolyline: MFPolyline?, coordinates: List<MFLocationCo
 fun Map4D.animateCameraSmoothlyTo(
     from: MFLocationCoordinate,
     to: MFLocationCoordinate,
-    newBearing: Double
+    newBearing: Double,
+    newZoom: Double,
+    newTilt: Double
 ) {
     val map4D = this
     val handler = android.os.Handler(Looper.getMainLooper())
     val startTime = System.currentTimeMillis()
     val duration = 1000L
 
+    // Get initial camera zoom and tilt
+    val startZoom = map4D.cameraPosition.zoom ?: newZoom
+    val startTilt = map4D.cameraPosition.tilt ?: newTilt
+    val startBearing = map4D.cameraPosition.bearing ?: 0.0
+
     handler.post(object : Runnable {
         override fun run() {
             val elapsed = System.currentTimeMillis() - startTime
             val t = (elapsed / duration.toFloat()).coerceIn(0f, 1f)
 
+            // Interpolate latitude and longitude
             val lat = from.latitude + (to.latitude - from.latitude) * t
             val lng = from.longitude + (to.longitude - from.longitude) * t
-
             val interpolated = MFLocationCoordinate(lat, lng)
 
-            val currentBearing = map4D.cameraPosition.bearing ?: 0.0
-            val bearing = interpolateBearing(currentBearing, newBearing, t)
+            // Interpolate bearing
+            val bearing = interpolateBearing(startBearing, newBearing, t)
 
+            // Interpolate zoom and tilt
+            val zoom = startZoom + (newZoom - startZoom) * t
+            val tilt = startTilt + (newTilt - startTilt) * t
+
+            // Build camera position
             val cameraPosition = MFCameraPosition.Builder()
                 .target(interpolated)
-                .zoom(20.0)
                 .bearing(bearing)
-                .tilt(45.0)
+                .tilt(tilt)
+                .zoom(zoom)
                 .build()
 
+            // Update camera
             map4D.moveCamera(MFCameraUpdateFactory.newCameraPosition(cameraPosition))
 
             if (t < 1f) {
