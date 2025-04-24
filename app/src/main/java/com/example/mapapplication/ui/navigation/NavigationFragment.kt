@@ -143,7 +143,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
                         currentLocationViewModel.currentLocation.value!!.latitude,
                         currentLocationViewModel.currentLocation.value!!.longitude
                     )
-                    routeViewModel.setNavigationStepIndex(0)
+                    routeViewModel.setNavigationStepIndex(1)
                 }
             }
         }

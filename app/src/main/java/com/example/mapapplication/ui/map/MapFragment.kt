@@ -39,7 +39,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
-    private var gofaBitmap : Bitmap? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,7 +80,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewLifecycleOwner.lifecycleScope.launch {
             currentLocationViewModel.currentLocation.collectLatest {location ->
                 if (location != null) {
-                    if (currentLocationMarker == null) currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
+                    currentLocationMarker = map4D.drawMarker(currentLocationMarker, location.latitude, location.longitude, R.drawable.ic_location)
                     currentLocationMarker?.animateToPosition(location)
 
                     val currentSpeed = location.speed.toKmPerHour()
@@ -90,8 +89,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         moveCameraToLocation(map4D, location.latitude, location.longitude, 17.0, 60.0, location.bearing)
                     }
                     else {
-//                        moveCameraToLocation(map4D, location.latitude, location.longitude, 14.5, 0.0, location.bearing)
-                        moveCameraToLocation(map4D, 20.98085354867591, 105.78798040202281, 14.5, 0.0, 0f)
+                        moveCameraToLocation(map4D, location.latitude, location.longitude, 14.5, 0.0, location.bearing)
                     }
 
                 } else {
