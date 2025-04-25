@@ -87,7 +87,6 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
         val mapView = binding.mapView
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
-        setupUI()
     }
 
     private fun setupUI() {
@@ -100,7 +99,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             currentLocationMarker?.remove()
             currentDirection?.remove()
             routeViewModel.setNavigationStepIndex(0)
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.mapFragment)
         }
         // distance remaining
         viewLifecycleOwner.lifecycleScope.launch {
@@ -116,6 +115,14 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             routeViewModel.typeSign.collectLatest { sign ->
                 if (sign != null) {
                     binding.bottomSheetDashboard.icNavigation.setImageResource(sign)
+                }
+            }
+        }
+        // road name
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.nextRoadName.collectLatest { roadName ->
+                if (roadName != null) {
+                    binding.bottomSheetDashboard.tvNameLocation.text = roadName
                 }
             }
         }
@@ -227,8 +234,8 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
                         .activeOutlineColor(Color.parseColor("#FF183668"))
                         .width(15.0f)
                         .outlineWidth(3f)
-                        .startIcon(null)
-                        .endIcon(null)
+                        .originPOIVisible(false)
+                        .destinationPOIVisible(false)
                     currentDirection = map4D.addDirectionsRenderer(options)
                 }
             }
@@ -243,6 +250,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
+            setupUI()
             map4D = p0
             map4D.mapType = MFMapType.MAP3D
             routing()
@@ -251,7 +259,7 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             destinationMarker = map4D.addMarker(
                 MFMarkerOptions()
                     .position(MFLocationCoordinate(destinationLat!!, destinationLng!!))
-                    .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_pin_marker))
+                    .icon(MFBitmapDescriptorFactory.fromResource(R.drawable.ic_destination))
                     .zIndex(15f)
             )
         }

@@ -1,5 +1,7 @@
 package com.example.mapapplication.ui.navigation
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -47,7 +49,7 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map4D: Map4D
     private var currentLocationMarker: MFMarker? = null
     private var destinationMarker: MFMarker? = null
-    private var currentDirection : MFDirectionsRenderer? = null
+    private var currentDirection: MFDirectionsRenderer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,14 +111,22 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
                         .activeOutlineColor(Color.parseColor("#FF183668"))
                         .width(10.0f)
                         .outlineWidth(2f)
-                        .startIcon(null)
-                        .endIcon(null)
+                        .originPOIVisible(false)
+                        .destinationPOIVisible(false)
                     currentDirection = map4D.addDirectionsRenderer(options)
 
                     val builder = MFCoordinateBounds.Builder()
                     coordinates.forEach { builder.include(it) }
                     val bounds = builder.build()
-                    map4D.animateCamera(MFCameraUpdateFactory.newCoordinateBounds(bounds, 0, 0, 0, 250))
+                    map4D.animateCamera(
+                        MFCameraUpdateFactory.newCoordinateBounds(
+                            bounds,
+                            0,
+                            0,
+                            0,
+                            250
+                        )
+                    )
                 }
             }
         }
@@ -125,6 +135,20 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
                 pathInfor?.let {
                     binding.tvDistance.text = it.distance.toDistance()
                     binding.tvDuration.text = it.duration.toDuration()
+                }
+            }
+        }
+        //loading
+        viewLifecycleOwner.lifecycleScope.launch {
+            routeViewModel.isLoading.collect { isLoading ->
+                if (isLoading == true) {
+                    binding.pgLoading.visibility = View.VISIBLE
+                    binding.mapView.visibility = View.GONE
+                    binding.layoutBottomSheet.visibility = View.GONE
+                } else {
+                    binding.pgLoading.visibility = View.GONE
+                    binding.mapView.visibility = View.VISIBLE
+                    binding.layoutBottomSheet.visibility = View.VISIBLE
                 }
             }
         }
@@ -138,18 +162,18 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.ROADMAP
+            map4D.mapType = MFMapType.MAP3D
             currentLocationMarker = map4D.drawMarker(
                 currentLocationMarker,
                 currentLat!!,
                 currentLng!!,
-                R.drawable.ic_location
+                R.drawable.ic_waypoint
             )
             destinationMarker = map4D.drawMarker(
                 destinationMarker,
                 destinationLat!!,
                 destinationLng!!,
-                R.drawable.ic_pin_marker
+                R.drawable.ic_destination
             )
             observe()
         }

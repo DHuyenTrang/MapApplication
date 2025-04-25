@@ -100,12 +100,12 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
                 if (it != null) {
                     destinationLat = it.lat
                     destinationLng = it.lng
-                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 14.5, 0.0, 0f)
+                    Utils.moveCameraToLocation(map4D, it.lat, it.lng, 18.0, 0.0, 0f)
                     destinationMarker = map4D.drawMarker(
                         destinationMarker,
                         it.lat,
                         it.lng,
-                        R.drawable.ic_pin_marker
+                        R.drawable.ic_destination
                     )
                     binding.bottomSheetDashboard.tvNameLocation.text = it.name
                     binding.bottomSheetDashboard.tvAddressLocation.text = it.address
@@ -130,7 +130,7 @@ class LocationInforFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.ROADMAP
+            map4D.mapType = MFMapType.MAP3D
             currentLocationMarker = map4D.drawMarker(
                 currentLocationMarker,
                 currentLat!!,

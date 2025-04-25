@@ -15,7 +15,7 @@ class LocationAdapter(private val onItemClick: (LocationSearched) -> Unit) : Lis
         fun bind(item: LocationSearched) {
             binding.tvNameLocation.text = item.description
             binding.tvAddressLocation.text = item.address
-            binding.btnDetail.setOnClickListener {
+            binding.root.setOnClickListener {
                 onItemClick(item)
             }
         }

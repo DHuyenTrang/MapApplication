@@ -47,6 +47,9 @@ class RouteViewModel(
     private val _isDeviated = MutableStateFlow<Boolean>(false)
     val isDeviated: StateFlow<Boolean> = _isDeviated.asStateFlow()
 
+    private val _nextRoadName = MutableStateFlow<String?>(null)
+    val nextRoadName: StateFlow<String?> = _nextRoadName.asStateFlow()
+
     fun setNavigationStepIndex(index: Int) {
         _navigationStepIndex.value = index
     }
@@ -57,11 +60,13 @@ class RouteViewModel(
 
         val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
-        Log.d("RouteViewModel", "Step: ${_navigationStepIndex.value}, Distance remaining: $distance")
+//        Log.d("RouteViewModel", "Step: ${_navigationStepIndex.value}, Distance remaining: $distance")
 
         _distanceRemaining.value = distance
         if (distance <= 10) {
             updateNavigationStepIndex()
+            val nextStep = _steps.value?.get(_navigationStepIndex.value)
+            _nextRoadName.value = getRoadName(nextStep?.maneuver?.instruction ?: "")
         }
     }
 
@@ -123,6 +128,24 @@ class RouteViewModel(
 
             }
         }
+    }
+
+    private fun getRoadName(step: String): String? {
+        val roadPatterns = listOf(
+            "onto (.*?\\.)\\.", // Matches "onto <road>."
+            "onto (.*?)(?:/|$)", // Matches "onto <road>/" or "onto <road>"
+            "toward (.*?)(?:/|$|\\.)", // Matches "toward <road>" or "toward <road>."
+            "take (.*?)(?:/|$|\\.)" // Matches "take <road>" or "take <road>."
+        )
+
+        roadPatterns.forEach { pattern ->
+            val regex = Regex(pattern)
+            val matchResult = regex.find(step)
+            if (matchResult != null) {
+                return matchResult.groupValues[1].trim()
+            }
+        }
+        return null
     }
 
     private fun getTypeSign(instruction: String) {

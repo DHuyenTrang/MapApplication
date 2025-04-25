@@ -6,7 +6,7 @@
     android:background="@drawable/bottom_sheet_background"
     android:orientation="vertical"
     android:padding="@dimen/margin_coordinator_layout"
-    app:behavior_peekHeight="210dp"
+    app:behavior_peekHeight="250dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <View
