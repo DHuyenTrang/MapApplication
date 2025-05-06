@@ -32,6 +32,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import vn.map4d.map.annotations.DirectionsRendererDelegate
@@ -127,8 +128,18 @@ class NavigationFragment : Fragment(), OnMapReadyCallback {
             }
         }
         // currentTime
-        val currentTime = SimpleDateFormat("HH:mm").format(Date())
-        binding.bottomSheetDashboard.tvCurrentTime.text = currentTime
+        viewLifecycleOwner.lifecycleScope.launch {
+            flow {
+                while (true) {
+                    val currentTime = SimpleDateFormat("HH:mm").format(Date())
+                    emit(currentTime)
+                    kotlinx.coroutines.delay(1000)
+                }
+            }
+                .collectLatest { currentTime ->
+                    binding.bottomSheetDashboard.tvCurrentTime.text = currentTime
+                }
+        }
         // duration and place
         viewLifecycleOwner.lifecycleScope.launch {
             routeViewModel.pathInfor.collect { pathInfor ->

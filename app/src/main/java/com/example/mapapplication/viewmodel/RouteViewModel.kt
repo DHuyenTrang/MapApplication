@@ -56,7 +56,8 @@ class RouteViewModel(
     fun calculateDistanceRemaining(location: Location) {
         val currentLocation = MFLocationCoordinate(location.latitude, location.longitude)
         val currentStep = _steps.value?.get(_navigationStepIndex.value)
-        currentStep?.maneuver?.instruction?.let { getTypeSign(it) }
+        _nextRoadName.value = currentStep?.name
+        getTypeSign()
 
         val nextPoint = currentStep?.maneuver?.location?.let { MFLocationCoordinate(it[1], it[0]) }
         val distance = currentLocation.distance(nextPoint!!)
@@ -65,8 +66,6 @@ class RouteViewModel(
         _distanceRemaining.value = distance
         if (distance <= 10) {
             updateNavigationStepIndex()
-            val nextStep = _steps.value?.get(_navigationStepIndex.value)
-            _nextRoadName.value = getRoadName(nextStep?.maneuver?.instruction ?: "")
         }
     }
 
@@ -130,40 +129,22 @@ class RouteViewModel(
         }
     }
 
-    private fun getRoadName(step: String): String? {
-        val roadPatterns = listOf(
-            "onto (.*?\\.)\\.", // Matches "onto <road>."
-            "onto (.*?)(?:/|$)", // Matches "onto <road>/" or "onto <road>"
-            "toward (.*?)(?:/|$|\\.)", // Matches "toward <road>" or "toward <road>."
-            "take (.*?)(?:/|$|\\.)" // Matches "take <road>" or "take <road>."
-        )
-
-        roadPatterns.forEach { pattern ->
-            val regex = Regex(pattern)
-            val matchResult = regex.find(step)
-            if (matchResult != null) {
-                return matchResult.groupValues[1].trim()
+    private fun getTypeSign() {
+        val maneuver = _steps.value?.get(_navigationStepIndex.value)?.maneuver
+        if (maneuver != null) {
+            if (maneuver.type == "turn"){
+                if (maneuver.modifier == "left") {
+                    _typeSign.value = Constant.TYPE_SIGN_LEFT
+                } else if (maneuver.modifier == "right") {
+                    _typeSign.value = Constant.TYPE_SIGN_RIGHT
+                }
             }
-        }
-        return null
-    }
-
-    private fun getTypeSign(instruction: String) {
-        if (instruction.contains("U-turn")) {
-            if (instruction.contains("left")) {
-                _typeSign.value = Constant.TYPE_SIGN_U_LEFT
-            } else {
-                _typeSign.value = Constant.TYPE_SIGN_U_RIGHT
-            }
-        }
-        else {
-            if (instruction.contains("left")) {
-                _typeSign.value = Constant.TYPE_SIGN_LEFT
-            } else if (instruction.contains("right")) {
-                _typeSign.value = Constant.TYPE_SIGN_RIGHT
-            }
-            else {
-                _typeSign.value = null
+            else if (maneuver.type == "uturn") {
+                if (maneuver.modifier == "left") {
+                    _typeSign.value = Constant.TYPE_SIGN_U_LEFT
+                } else if (maneuver.modifier == "right") {
+                    _typeSign.value = Constant.TYPE_SIGN_U_RIGHT
+                }
             }
         }
     }

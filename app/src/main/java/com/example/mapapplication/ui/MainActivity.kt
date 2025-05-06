@@ -1,21 +1,29 @@
 package com.example.mapapplication.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import com.example.mapapplication.databinding.ActivityMainBinding
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.mapapplication.R
+import com.example.mapapplication.databinding.ActivityMainBinding
 import com.example.mapapplication.manager.TokenManager
+import com.example.mapapplication.utils.Constant // Make sure Constant.BLUETOOTH_REQUEST_CODE exists or remove if not used elsewhere
 import com.example.mapapplication.utils.extension.toKmPerHour
 import com.example.mapapplication.viewmodel.CurrentLocationViewModel
-import com.example.mapapplication.viewmodel.RouteViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -32,11 +40,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val tokenManager: TokenManager by inject()
     private val currentLocationViewModel: CurrentLocationViewModel by viewModel()
-    private val routeViewModel: RouteViewModel by viewModel()
 
     private var previousLocation: Location? = null
     private var currentLocation: Location? = null
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient // API Google Play Services giup dinh vi
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val locationRequest = LocationRequest.Builder(
         Priority.PRIORITY_HIGH_ACCURACY, // priority
         1000L // interval in milliseconds
@@ -44,12 +51,48 @@ class MainActivity : AppCompatActivity() {
         setMinUpdateIntervalMillis(1000L) // fastest interval
     }.build()
 
+    // --- Permission Launchers ---
+    private lateinit var locationPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var bluetoothPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var bluetoothEnableLauncher: ActivityResultLauncher<Intent>
+
+    // --- Location Callback ---
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            currentLocation = result.lastLocation ?: return
+            Log.d("LOCATION", "New Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}, Speed: ${currentLocation?.speed?.toKmPerHour()} km/h")
+
+            if (previousLocation == null) {
+                previousLocation = currentLocation
+                updateCurrentLocationOnMap(currentLocation!!)
+            } else {
+                // Update only if moved a certain distance (e.g., 5 meters)
+                if (currentLocation!!.distanceTo(previousLocation!!) >= 5f) {
+                    previousLocation = currentLocation
+                    updateCurrentLocationOnMap(currentLocation!!)
+                } else {
+                    Log.d("LOCATION", "Location unchanged significantly.")
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupNavigation()
+        observeLogout()
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        initializePermissionLaunchers()
+        checkAndRequestLocationPermission()
+    }
+
+    private fun setupNavigation() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val controller = navHostFragment.navController
 
@@ -58,63 +101,158 @@ class MainActivity : AppCompatActivity() {
         } else {
             controller.navigate(R.id.signInFragment)
         }
-        // observe logout event
+    }
+
+    private fun observeLogout() {
         lifecycleScope.launch {
             tokenManager.logoutFlow.collectLatest {
-                controller.navigate(R.id.signInFragment)
-            }
-        }
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        requestLocationPermission()
-    }
-
-    private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult) {
-            super.onLocationResult(result)
-            currentLocation = result.lastLocation ?: return
-//            Log.d("LOCATION", "Location: ${location.latitude}, ${location.longitude}")
-            if (previousLocation == null) {
-                previousLocation = currentLocation
-                updateCurrentLocationOnMap(currentLocation!!)
-            }
-            else {
-                if(currentLocation!!.distanceTo(previousLocation!!) < 5) {
-                    return
-                }
-                else {
-                    previousLocation = currentLocation
-                    updateCurrentLocationOnMap(currentLocation!!)
-                }
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                navHostFragment.navController.navigate(R.id.signInFragment)
             }
         }
     }
 
-    private fun updateCurrentLocationOnMap(location: Location) {
-        currentLocationViewModel.setCurrentLocation(location)
-        currentLocationViewModel.setCurrentSpeed(location.speed.toKmPerHour())
-    }
-
-    private fun requestLocationPermission() {
-        val requestPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                isGranted ->
+    private fun initializePermissionLaunchers() {
+        locationPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
                 Log.d("PERMISSION", "Location permission granted")
+                startLocationUpdates()
+                checkAndRequestBluetoothPermission()
             } else {
                 Log.d("PERMISSION", "Location permission denied")
             }
         }
 
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        bluetoothPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("PERMISSION", "Bluetooth Connect permission granted")
+                checkAndEnableBluetooth()
+            } else {
+                Log.d("PERMISSION", "Bluetooth Connect permission denied")
+            }
         }
-        else{
-            requestPermission.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+        bluetoothEnableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                Log.d("BLUETOOTH", "Bluetooth enabled by user.")
+            } else {
+                Log.d("BLUETOOTH", "User declined to enable Bluetooth.")
+                Toast.makeText(this, "Bluetooth is not enabled.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkAndRequestLocationPermission() {
+        Log.d("PERMISSION", "Checking Location Permission...")
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.d("PERMISSION", "Location permission already granted.")
+                startLocationUpdates()
+                checkAndRequestBluetoothPermission()
+            }
+            else -> {
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                fusedLocationProviderClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+                Log.d("LOCATION", "requestLocationUpdates called successfully.")
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    if (location != null && currentLocation == null) {
+                        Log.d("LOCATION", "Got last known location: ${location.latitude}, ${location.longitude}")
+                        currentLocation = location
+                        updateCurrentLocationOnMap(location)
+                    } else {
+                        Log.d("LOCATION", "Last known location is null or updates already started.")
+                    }
+                }.addOnFailureListener { e ->
+                    Log.e("LOCATION", "Error getting last known location", e)
+                }
+
+            } catch (e: SecurityException) {
+                checkAndRequestLocationPermission()
+            }
+        } else {
+            Log.w("LOCATION", "Attempted to start location updates without permission.")
+        }
+    }
+
+    private fun checkAndRequestBluetoothPermission() {
+        Log.d("PERMISSION", "Checking Bluetooth Permission...")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Log.d("PERMISSION", "Bluetooth Connect permission already granted.")
+                    checkAndEnableBluetooth()
+                }
+                // TODO: Add shouldShowRequestPermissionRationale if needed
+                else -> {
+                    Log.d("PERMISSION", "Requesting Bluetooth Connect Permission...")
+                    bluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
+                }
+            }
+        } else {
+            Log.d("PERMISSION", "Bluetooth permissions not required at runtime for this Android version.")
+            checkAndEnableBluetooth()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun checkAndEnableBluetooth() {
+        val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager?
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
+
+        if (bluetoothAdapter == null) {
+            Log.w("BLUETOOTH", "Device does not support Bluetooth")
+            return
+        }
+
+        if (!bluetoothAdapter.isEnabled) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    Log.w("BLUETOOTH", "Cannot request Bluetooth enable without BLUETOOTH_CONNECT permission.")
+                    return
+                }
+            }
+            // Launch the intent to request enabling Bluetooth
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            try {
+                bluetoothEnableLauncher.launch(enableBtIntent)
+            } catch (e: SecurityException){
+                Log.e("BLUETOOTH", "SecurityException trying to enable Bluetooth: ${e.message}")
+            }
+
+        } else {
+            Log.d("BLUETOOTH", "Bluetooth is already enabled.")
+
+        }
+    }
+
+    private fun updateCurrentLocationOnMap(location: Location) {
+        currentLocationViewModel.setCurrentLocation(location)
+        if (location.hasSpeed()) {
+            currentLocationViewModel.setCurrentSpeed(location.speed.toKmPerHour())
         }
     }
 
     private fun checkCurrentUser(): Boolean {
-        Log.d("AUTH", "checkCurrentUser: ${tokenManager.getAccessToken()}")
-        return tokenManager.getUserId() != null
+        val userId = tokenManager.getUserId()
+        return userId != null
     }
+
 }

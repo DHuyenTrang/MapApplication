@@ -162,7 +162,7 @@ class RouteFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(p0: Map4D?) {
         if (p0 != null) {
             map4D = p0
-            map4D.mapType = MFMapType.MAP3D
+            map4D.mapType = MFMapType.ROADMAP
             currentLocationMarker = map4D.drawMarker(
                 currentLocationMarker,
                 currentLat!!,

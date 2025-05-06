@@ -7,4 +7,5 @@ object Constant {
     val TYPE_SIGN_RIGHT = R.drawable.ic_turn_right
     val TYPE_SIGN_U_LEFT = R.drawable.ic_u_turn_left
     val TYPE_SIGN_U_RIGHT = R.drawable.ic_u_turn_right
+    val BLUETOOTH_REQUEST_CODE = 1000
 }

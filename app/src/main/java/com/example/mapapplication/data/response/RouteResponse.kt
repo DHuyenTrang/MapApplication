@@ -23,6 +23,7 @@ data class Route(
      val geometry: String,
      val distance: Double,
      val duration: Double,
+     val name: String,
  ) {}
 
 data class Intersection(
@@ -32,4 +33,6 @@ data class Intersection(
 data class Maneuver(
     val location: List<Double>,
     val instruction: String,
+    val type: String,
+    val modifier: String
 )
