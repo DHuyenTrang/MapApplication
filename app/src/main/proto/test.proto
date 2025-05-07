@@ -1,0 +1,7 @@
+// app/src/main/proto/test.proto
+syntax = "proto3";
+package com.example.protobufdemo;
+
+message TestMessage {
+  string content = 1;
+}

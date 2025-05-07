@@ -65,10 +65,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setUpBottomSheet() {
-        val bottomSheet = binding.bottomSheetDashboard.root
+        val bottomSheet = binding.bottomSheetDashboard
         val bottomSheetBehavior =
-            BottomSheetBehavior.from<LinearLayout>(bottomSheet)
+            BottomSheetBehavior.from<LinearLayout>(bottomSheet.root)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        bottomSheet.btnConnectGosafe.setOnClickListener {
+            findNavController().navigate(R.id.connectGoSafeFragment)
+        }
     }
 
     private fun listenEvent() {

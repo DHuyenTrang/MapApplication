@@ -125,6 +125,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/btn_connect_gosafe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Gofa.Button"
+            android:textAppearance="@style/Gofa.TextSm.Bold"
+            android:text="Kết nối GoSafe"
+            android:layout_margin="@dimen/activity_padding_horizontal"
+            />
     </androidx.appcompat.widget.LinearLayoutCompat>
     <!--    </androidx.core.widget.NestedScrollView>-->
 </LinearLayout>

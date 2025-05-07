@@ -53,8 +53,9 @@ class MainActivity : AppCompatActivity() {
 
     // --- Permission Launchers ---
     private lateinit var locationPermissionLauncher: ActivityResultLauncher<String>
-    private lateinit var bluetoothPermissionLauncher: ActivityResultLauncher<String>
-    private lateinit var bluetoothEnableLauncher: ActivityResultLauncher<Intent>
+//    private lateinit var bluetoothPermissionLauncher: ActivityResultLauncher<String>
+//
+//    private lateinit var bluetoothEnableLauncher: ActivityResultLauncher<Intent>
 
     // --- Location Callback ---
     private val locationCallback = object : LocationCallback() {
@@ -117,41 +118,35 @@ class MainActivity : AppCompatActivity() {
             if (isGranted) {
                 Log.d("PERMISSION", "Location permission granted")
                 startLocationUpdates()
-                checkAndRequestBluetoothPermission()
+//                checkAndRequestBluetoothPermission()
             } else {
                 Log.d("PERMISSION", "Location permission denied")
             }
         }
 
-        bluetoothPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                Log.d("PERMISSION", "Bluetooth Connect permission granted")
-                checkAndEnableBluetooth()
-            } else {
-                Log.d("PERMISSION", "Bluetooth Connect permission denied")
-            }
-        }
-
-        bluetoothEnableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                Log.d("BLUETOOTH", "Bluetooth enabled by user.")
-            } else {
-                Log.d("BLUETOOTH", "User declined to enable Bluetooth.")
-                Toast.makeText(this, "Bluetooth is not enabled.", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        bluetoothPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+//            if (isGranted) {
+//                checkAndEnableBluetooth()
+//            }
+//        }
+//
+//        bluetoothEnableLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == RESULT_OK) {
+//                Log.d("BLUETOOTH", "Bluetooth enabled by user.")
+//            } else {
+//                Log.d("BLUETOOTH", "User declined to enable Bluetooth.")
+//            }
+//        }
     }
 
     private fun checkAndRequestLocationPermission() {
-        Log.d("PERMISSION", "Checking Location Permission...")
         when {
             ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.d("PERMISSION", "Location permission already granted.")
                 startLocationUpdates()
-                checkAndRequestBluetoothPermission()
+//                checkAndRequestBluetoothPermission()
             }
             else -> {
                 locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -168,80 +163,69 @@ class MainActivity : AppCompatActivity() {
                     locationCallback,
                     Looper.getMainLooper()
                 )
-                Log.d("LOCATION", "requestLocationUpdates called successfully.")
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                     if (location != null && currentLocation == null) {
                         Log.d("LOCATION", "Got last known location: ${location.latitude}, ${location.longitude}")
                         currentLocation = location
                         updateCurrentLocationOnMap(location)
-                    } else {
-                        Log.d("LOCATION", "Last known location is null or updates already started.")
                     }
-                }.addOnFailureListener { e ->
-                    Log.e("LOCATION", "Error getting last known location", e)
                 }
 
             } catch (e: SecurityException) {
                 checkAndRequestLocationPermission()
             }
-        } else {
-            Log.w("LOCATION", "Attempted to start location updates without permission.")
         }
     }
 
-    private fun checkAndRequestBluetoothPermission() {
-        Log.d("PERMISSION", "Checking Bluetooth Permission...")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    Log.d("PERMISSION", "Bluetooth Connect permission already granted.")
-                    checkAndEnableBluetooth()
-                }
-                // TODO: Add shouldShowRequestPermissionRationale if needed
-                else -> {
-                    Log.d("PERMISSION", "Requesting Bluetooth Connect Permission...")
-                    bluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
-                }
-            }
-        } else {
-            Log.d("PERMISSION", "Bluetooth permissions not required at runtime for this Android version.")
-            checkAndEnableBluetooth()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun checkAndEnableBluetooth() {
-        val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager?
-        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
-
-        if (bluetoothAdapter == null) {
-            Log.w("BLUETOOTH", "Device does not support Bluetooth")
-            return
-        }
-
-        if (!bluetoothAdapter.isEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    Log.w("BLUETOOTH", "Cannot request Bluetooth enable without BLUETOOTH_CONNECT permission.")
-                    return
-                }
-            }
-            // Launch the intent to request enabling Bluetooth
-            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            try {
-                bluetoothEnableLauncher.launch(enableBtIntent)
-            } catch (e: SecurityException){
-                Log.e("BLUETOOTH", "SecurityException trying to enable Bluetooth: ${e.message}")
-            }
-
-        } else {
-            Log.d("BLUETOOTH", "Bluetooth is already enabled.")
-
-        }
-    }
+//    private fun checkAndRequestBluetoothPermission() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            when {
+//                ContextCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.BLUETOOTH_CONNECT
+//                ) == PackageManager.PERMISSION_GRANTED -> {
+//                    Log.d("PERMISSION", "Bluetooth Connect permission already granted.")
+//                    checkAndEnableBluetooth()
+//                }
+//                else -> {
+//                    bluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT)
+//                    bluetoothPermissionLauncher.launch(Manifest.permission.BLUETOOTH_SCAN)
+//                }
+//            }
+//        } else {
+//            checkAndEnableBluetooth()
+//        }
+//    }
+//
+//    @SuppressLint("MissingPermission")
+//    private fun checkAndEnableBluetooth() {
+//        val bluetoothManager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager?
+//        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
+//
+//        if (bluetoothAdapter == null) {
+//            Log.w("BLUETOOTH", "Device does not support Bluetooth")
+//            return
+//        }
+//
+//        if (!bluetoothAdapter.isEnabled) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//                    Log.w("BLUETOOTH", "Cannot request Bluetooth enable without BLUETOOTH_CONNECT permission.")
+//                    return
+//                }
+//            }
+//            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+//            try {
+//                bluetoothEnableLauncher.launch(enableBtIntent)
+//            } catch (e: SecurityException){
+//                Log.e("BLUETOOTH", "SecurityException trying to enable Bluetooth: ${e.message}")
+//            }
+//
+//        } else {
+//            Log.d("BLUETOOTH", "Bluetooth is already enabled.")
+//
+//        }
+//    }
 
     private fun updateCurrentLocationOnMap(location: Location) {
         currentLocationViewModel.setCurrentLocation(location)

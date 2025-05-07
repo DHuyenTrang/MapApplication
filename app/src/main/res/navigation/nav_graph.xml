@@ -55,4 +55,9 @@
             android:id="@+id/action_routeFragment_to_navigationFragment"
             app:destination="@id/navigationFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/connectGoSafeFragment"
+        android:name="com.example.mapapplication.ble.ConnectGoSafeFragment"
+        android:label="fragment_connect_go_safe"
+        tools:layout="@layout/fragment_connect_go_safe" />
 </navigation>

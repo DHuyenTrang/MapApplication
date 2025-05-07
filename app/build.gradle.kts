@@ -80,4 +80,8 @@ dependencies {
     implementation ("com.google.android.filament:gltfio-android:1.57.1")
     // Optional: Add filament-utils-android if needed for additional utilities
     implementation ("com.google.android.filament:filament-utils-android:1.57.1")
+
+    // protobuf
+    implementation ("com.google.protobuf:protobuf-javalite:3.25.3")
 }
+
